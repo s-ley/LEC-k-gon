@@ -1,0 +1,17 @@
+{
+  "name": "lec-k-gon",
+  "version": "1.0.0",
+  "description": "Mayor Círculo Vacío con restricciones de ubicación.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index",
+    "start": "node index"
+  },
+  "author": "Santiago Ley Flores",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "node": "^11.11.0"
+  }
+}
