@@ -1,1 +1,5 @@
 node_modules/*
+
+public/javascripts/delaunay/.gitignore
+public/javascripts/delaunay/example/*
+public/javascripts/delaunay/screenshot.png
