@@ -14,11 +14,18 @@
     <h1>Mayor Círculo Vacío con restricciones de ubicación.</h1>
     <input type='file' id='files' name="files[]" >
     <button id='Load'>Load Points</button>
+    <div id='Random'>
+            <input type="range" min="10" max="100" class="slider">
+            <span></span>
+        <button>Generate Random</button>
+    </div>
+    <button id='Delaunay'>Generate Delaunay</button>
     <div id="box" class="jxgbox" style="width:500px; height:500px;"></div>
 
     <!-- Jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <!-- Custom Files -->
-    <script type="text/javascript" src="./javascripts/events.js"></script>
+    <script src="./javascripts/delaunay/delaunay.js"></script>
+    <script type="module" src="./javascripts/main.js"></script>
 </body>
 </html>

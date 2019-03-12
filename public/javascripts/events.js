@@ -1,16 +1,21 @@
 // Configuration options
-var eps = 1;
+var eps;
 
 // Jsxgraph global variables
 var points = [];
 var board = null;
+
 var line_start = null;
 
 // Set for points
 var lines = {};
+var line_list = [];
 function add(o, x, y, l){
   if (!o[x]) o[x] = {};
+  if(!o[x][y]){
     o[x][y] = l;
+    line_list.push(l);
+  }
 }
 function has(o, x, y){
   return !!(o[x] && o[x][y]);
@@ -23,6 +28,13 @@ function del(o, x, y) {
   delete o[x][y];
 }
 
+function add_line(a, b){
+  var idx1 = Math.min(a, b), idx2 = Math.max(a, b);
+  if(!has(lines, idx1, idx2)){
+    var line = board.create('line',[points[idx1],points[idx2]], {straightFirst:false, straightLast:false, strokeWidth:1, dash:1});
+    add(lines, idx1, idx2, line);
+  }
+}
 // Creating lines by point clicking
 function reset_line_creator(){
   points[line_start].setAttribute({fillColor:'#ff0000'});
@@ -41,11 +53,18 @@ var line_creator = function(e){
       del(lines, idx1, idx2);
       reset_line_creator();
     } else {
-      var line = board.create('line',[points[idx1],points[idx2]], {straightFirst:false, straightLast:false, strokeWidth:2, dash:1});
+      var line = board.create('line',[points[idx1],points[idx2]], {straightFirst:false, straightLast:false, strokeWidth:1, dash:1});
       add(lines, idx1, idx2, line);
       reset_line_creator();
     }
   }
+}
+
+function add_point(x, y, fillColor){
+  var p = board.create('point', [x, y], {size: 2, name:'', face:'<>', color: fillColor});
+  p.index = points.length;
+  points.push(p);
+  p.on('up', line_creator);
 }
 
 // Create points by clicking
@@ -69,78 +88,47 @@ var down = function(e) {
       }
   }
   if (canCreate) {
-    var p = board.create('point', [coords.usrCoords[1], coords.usrCoords[2]]);
-    p.index = points.length;
-    points.push(p);
-    p.on('up', line_creator);
+    add_point(coords.usrCoords[1], coords.usrCoords[2], 'blue');
   }
 };
 
 function reset(){
-  points.map(a => board.removeObject(a));
+  /* line_list.map(a => board.removeObject(a));
+  points.map(a => board.removeObject(a)); */
+  line_list = [];
   points = [];
+  lines = {};
 }
-
-// Load File
-function loadFile(evt) {
-  var files = $('#files')[0].files; // FileList object
-
-  // files is a FileList of File objects. List some properties.
-  for (var i = 0, f; f = files[i]; i++) {
-    if(!f.type.match("text/*"))
-      continue;
-    
-    reset();
-    
-    var reader = new FileReader();
-
-    // Closure to capture the file information.
-    reader.onload = (function(theFile) {
-      return function(e) {
-        // Render thumbnail.
-        var content = e.target.result.split(/\s+/).map(parseFloat);
-        var minx = content[0], maxx = content[0], miny = content[1], maxy = content[1];
-        for(var i = 0; i+1<content.length; i+=2){
-          minx = Math.min(minx,content[i]);
-          miny = Math.min(miny,content[i+1]);
-          maxx = Math.max(maxx,content[i]);
-          maxy = Math.max(maxy,content[i+1]);
-        }
-        minx -= eps;
-        maxx += eps;
-        miny -= eps;
-        maxy += eps;
-        var bb = [minx, maxy, maxx, miny];
-        
-        
-        JXG.JSXGraph.freeBoard(board);
-        board = JXG.JSXGraph.initBoard('box', {boundingbox: bb, axis:true});
-        board.on('down', down);
-
-        for(var i = 0; i+1<content.length; i+=2){
-          var p = board.create('point', [content[i], content[i+1]]);
-          p.index = points.length;
-          points.push(p);
-          p.on('up', line_creator);
-        }
-        
-        /* console.log(board.attr);
-        board.attr.boundingbox[0] = minx;
-        board.attr.boundingbox[1] = maxy;
-        board.attr.boundingbox[2] = maxx;
-        board.attr.boundingbox[3] = miny;
-        console.log(board.attr); */
-        //board.setAttribute({boundingbox: bb})
-      };
-    })(f);
-    // Read in the image file as a data URL.
-    reader.readAsText(f);
-  }
-}
-$('#Load').click(loadFile);
-
-// Set everything up
-$( document ).ready(function() {
-  board = JXG.JSXGraph.initBoard('box', {boundingbox: [-3, 3, 3, -3], axis:true});
+function create_board(bb){
+  eps = Math.max(bb[1]-bb[3], bb[2]-bb[0])*0.1;
+  bb[0] -= eps; bb[1] += eps; bb[2] += eps; bb[3] -= eps;
+  board = JXG.JSXGraph.initBoard('box', {boundingbox: bb, axis:true});
   board.on('down', down);
-});
+}
+function delete_board(){
+  reset();
+  JXG.JSXGraph.freeBoard(board);
+}
+
+function generate_delaunay(){
+  if(points.length < 3)
+    return;
+
+  var vertices = points.map((p,i) => new delaunay.Vertex(p.coords.usrCoords[1], p.coords.usrCoords[2], i));
+
+  var triangles = delaunay.triangulate(vertices);
+
+  triangles.map(t => {
+    add_line(t.v0.idx, t.v1.idx);
+    add_line(t.v0.idx, t.v2.idx);
+    add_line(t.v1.idx, t.v2.idx);
+  });
+}
+
+export const data = {
+  create_board: create_board, 
+  delete_board: delete_board, 
+  add_point: add_point,
+  reset: reset,
+  generate_delaunay: generate_delaunay
+};
