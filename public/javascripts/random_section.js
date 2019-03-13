@@ -1,4 +1,5 @@
-import { data } from "./events.js";
+import { board } from "./board.js";
+import { sites } from "./sites.js";
 
 var numPoints = 20;
 var minx = -50, maxx = 50;
@@ -10,10 +11,12 @@ $('#Random input').on('input propertychange', (e) => {
 });
 
 $('#Random button').on('click', (e) => {
-    data.delete_board();
-    data.create_board([minx, maxy, maxx, miny]);
+    board.reset([minx, maxy, maxx, miny]);
+    sites.reset();
+    
+
     for(var i=0;i<numPoints;i++) {
-        data.add_point(Math.random()*(maxx-minx)+minx, Math.random()*(maxy-miny)+miny, 'red');
+        sites.add(Math.random()*(maxx-minx)+minx, Math.random()*(maxy-miny)+miny, 'red');
     }
 });
 

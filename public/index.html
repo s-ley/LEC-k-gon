@@ -1,27 +1,33 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Mayor Círculo Vacío con restricciones de ubicación.</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!-- JSX Graph -->
-        <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
-        <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
-    </head>
-    <body>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Mayor Círculo Vacío con restricciones de ubicación.</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- JSX Graph -->
+    <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+    <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
+</head>
+<body>
     
     <h1>Mayor Círculo Vacío con restricciones de ubicación.</h1>
     <input type='file' id='files' name="files[]" >
-    <button id='Load'>Load Points</button>
+    <button id='Load'>Load Points in File</button>
     <div id='Random'>
-            <input type="range" min="10" max="100" class="slider">
-            <span></span>
-        <button>Generate Random</button>
+        <input type="range" min="10" max="100" class="slider">
+        <span></span>
+        <button>Generate Random Sites</button>
     </div>
-    <button id='Delaunay'>Generate Delaunay</button>
-    <div id="box" class="jxgbox" style="width:500px; height:500px;"></div>
-
+    <button id='Delaunay'>Generate Delaunay of Sites</button>
+    <div style="display:grid; grid-template-columns: 1fr 1fr">
+        <div id="box" class="jxgbox" style="width:500px; height:500px;"></div>
+        <div>
+            <h3>Sites</h3>
+            <ol id='Sites' style="height:400px; width:130px; overflow-y: scroll;"></ol>
+        </div>
+    </div>
+    
     <!-- Jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <!-- Custom Files -->

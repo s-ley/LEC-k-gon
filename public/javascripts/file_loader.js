@@ -1,4 +1,4 @@
-import { data } from "./events.js";
+import { board } from "./board.js";
 
 // Load File
 function loadFile(evt) {
@@ -8,8 +8,6 @@ function loadFile(evt) {
     for (var i = 0, f; f = files[i]; i++) {
       if(!f.type.match("text/*"))
         continue;
-      
-      data.reset();
       
       var reader = new FileReader();
   
@@ -27,11 +25,10 @@ function loadFile(evt) {
           }
           var bb = [minx, maxy, maxx, miny];
           
-          data.delete_board();
-          data.create_board(bb);
+          board.reset(bb);
   
           for(var i = 0; i+1<content.length; i+=2){
-            data.add_point(content[i], content[i+1], 'red');
+            board.add_point(content[i], content[i+1], 'red');
           }
         };
       })(f);

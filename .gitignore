@@ -1,4 +1,5 @@
 node_modules/*
+.vscode/*
 
 public/javascripts/delaunay/.gitignore
 public/javascripts/delaunay/example/*
