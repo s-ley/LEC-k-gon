@@ -1,4 +1,4 @@
-Mayor círculo vacío con restricciones de ubicación.
+Mayor círculo vacío con restricciones de ubicación en O(kn + nlogn).
 
 Implementación de algoritmos basados en los artículos.
 > G.T. Toussaint, 1983. Computing Largest Empty Circles
