@@ -10,27 +10,60 @@
     <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
 </head>
 <body>
-    
+    <style>
+        .Container{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+        .Container>div{
+            padding: 10px;
+        }
+    </style>
     <h1>Mayor Círculo Vacío con restricciones de ubicación.</h1>
-    <input type='file' id='files' name="files[]" >
-    <button id='Load'>Load Points in File</button>
-    <div id='Random'>
-        <input type="range" min="10" max="100" class="slider">
-        <span></span>
-        <button>Generate Random Sites</button>
+    <div class='Container'>
+        <div style='border: 1px solid black;'>
+            <input type='file' id='files' name="files[]" >
+            <button id='Load'>Load Sites from File</button>
+        </div>
+        <div id='Random' style='border: 1px solid black;'>
+            <input type="range" min="10" max="100" class="slider">
+            <span></span>
+            <button>Generate Random Sites</button>
+        </div>
     </div>
-    <button id='Delaunay'>Generate Delaunay of Sites</button>
+    <div class='Container'>
+        <div style='border: 1px solid black; display: flex; float: left;'>
+            <button id='Delaunay'>Generate Delaunay of Sites</button>
+            <button id='EnablePolygon'>Enable: Add vertex by click</button>
+            <button id='DisablePolygon'>Disable: Add vertex by click</button>
+        </div>
+        <div id='Error' style='display: grid; grid-template-columns: 1fr 100px; border: 1px solid black;'>
+            <p style='color: red;'></p>
+            <button style='height: 30px; top: 50%; transform: translateY(25%);'>Clear</button>
+        </div>
+    </div>
     <div style="display:grid; grid-template-columns: 1fr 1fr">
         <div id="box" class="jxgbox" style="width:500px; height:500px;"></div>
-        <div>
-            <h3>Sites</h3>
-            <ol id='Sites' style="height:400px; width:130px; overflow-y: scroll;"></ol>
+        <div style="display:grid; grid-template-columns: 1fr 2fr">
+            <div>
+                <div style='display: grid; grid-template-columns: 1fr 1fr'>
+                    <h3>Polygon</h3>
+                    <button id='ClosePolygon' style='height: 30px; top: 50%; transform: translateY(25%);'>Close Polygon</button>
+                </div>
+                Click en el mapa
+                <ol id='Polygon' style="height:400px; width:130px; overflow-y: scroll;"></ol>
+            </div>
+            <div style='margin-left: 30px;'>
+                <h3>Sites</h3>
+                <ol id='Sites' style="height:400px; width:130px; overflow-y: scroll;"></ol>
+            </div>
         </div>
     </div>
     
     <!-- Jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <!-- Custom Files -->
+    <script src="./javascripts/delaunay-triangulation/delaunay.js"></script>
     <script src="./javascripts/delaunay/delaunay.js"></script>
     <script type="module" src="./javascripts/main.js"></script>
 </body>

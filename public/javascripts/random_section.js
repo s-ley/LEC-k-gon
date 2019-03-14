@@ -1,5 +1,9 @@
 import { board } from "./board.js";
 import { sites } from "./sites.js";
+import { polygon } from "./polygon.js";
+
+// TODO:
+// Verificar que los puntos no puedan estar a distancia menor que 0.01
 
 var numPoints = 20;
 var minx = -50, maxx = 50;
@@ -12,8 +16,8 @@ $('#Random input').on('input propertychange', (e) => {
 
 $('#Random button').on('click', (e) => {
     board.reset([minx, maxy, maxx, miny]);
-    sites.reset();
-    
+    sites.reset();    
+    polygon.reset();
 
     for(var i=0;i<numPoints;i++) {
         sites.add(Math.random()*(maxx-minx)+minx, Math.random()*(maxy-miny)+miny, 'red');

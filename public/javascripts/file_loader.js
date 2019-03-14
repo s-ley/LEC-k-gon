@@ -1,4 +1,6 @@
 import { board } from "./board.js";
+import { sites } from "./sites.js";
+import { polygon } from "./polygon.js";
 
 // Load File
 function loadFile(evt) {
@@ -26,9 +28,11 @@ function loadFile(evt) {
           var bb = [minx, maxy, maxx, miny];
           
           board.reset(bb);
+          sites.reset();
+          polygon.reset();
   
           for(var i = 0; i+1<content.length; i+=2){
-            board.add_point(content[i], content[i+1], 'red');
+            sites.add(content[i], content[i+1], 'red');
           }
         };
       })(f);

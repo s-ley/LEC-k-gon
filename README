@@ -8,9 +8,9 @@ Parallel Programming, v12.5, pp 347-358.
 Empty Circles with Location Constraints Dartmouth
 Computer Science Technical Report PCS-TR86-130
 
-Se usa la biblioteca de Matias Savela para la triangulación de 
- Delaunay basada en el algoritmo Bowyer-Watson.
-https://github.com/msavela/delaunay
+Se usa la biblioteca de Philippe Legault para la triangulación de 
+ Delaunay basada en el algoritmo de Guibas & Stolfi.
+https://github.com/Bathlamos/delaunay-triangulation
 
 A la cual se le hace ligeras alteraciones para generar un DCEL
  basado en la descripción de:
@@ -18,7 +18,15 @@ A la cual se le hace ligeras alteraciones para generar un DCEL
 and Applications (2ed). Berlin: Springer, 2000. pp
 185-197.
 
-Para generar el diagrama de Voronoi y poder aplicar el algoritmo
+Esto para generar el diagrama de Voronoi y poder aplicar el algoritmo
  para el LEC bajo restricciones de ubicación en O(k+nlogn) para
  polígonos convexos de k lados y O(nk + nlogn) para polígonos simples
  de k lados.
+
+Notas:
+El algoritmo de la triangulacion de delaunay, puede tener problemas 
+ si los puntos estan a una distancia menor de 0.01. Se recomienda
+ multiplicarlos por una constante.
+
+TODO:
+- Checar los puntos para que no haya problemas de precision al momento de hacer la triangulacion de delaunay.

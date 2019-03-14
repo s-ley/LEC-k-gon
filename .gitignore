@@ -4,3 +4,8 @@ node_modules/*
 public/javascripts/delaunay/.gitignore
 public/javascripts/delaunay/example/*
 public/javascripts/delaunay/screenshot.png
+
+public/javascripts/delaunay-triangulation/test/*
+public/javascripts/delaunay-triangulation/wiki/*
+public/javascripts/delaunay-triangulation/.gitignore
+public/javascripts/delaunay-triangulation/.travis.yml
