@@ -7,16 +7,23 @@ function show_generator(){
 function hide_generator(){
     $('#Voronoi').css('display', 'none');
 }
-function halfEdge_to_html(he, prefix){
+function halfEdge_to_html(he){
     if(he)
-        return $(`<p>${prefix}HalfEdge: <strong>${he.p1.point_index} -> ${he.p2.point_index}</strong>. Incident Face: ${(he.incident_face)?he.incident_face.point_index:'null'}</p>`);
-    return $(`<p>${prefix}HalfEdge: null.</p>`)
+        return $(` <strong>${he.p1.point_index} -> ${he.p2.point_index}. </strong>`);
+    return $(`<strong>null.</strong>`)
+}
+function incident_face_to_html(he){
+    return `${(he && he.incident_face)?he.incident_face.point_index:'null'}.`;
 }
 function dcel_to_html(halfEdge){
-    var res = $('<div></div>');
-    res.append(halfEdge_to_html(halfEdge, ''));
-    res.append(halfEdge_to_html(halfEdge.next, 'Siguiente: '));
-    res.append(halfEdge_to_html(halfEdge.prev, 'Anterior: '));
+    var res = $('<p></p>');
+    res.append(halfEdge_to_html(halfEdge.prev));
+    res.append(halfEdge_to_html(halfEdge));
+    res.append(halfEdge_to_html(halfEdge.next));
+    res.append('. Incident Faces: ');
+    res.append(incident_face_to_html(halfEdge.prev));
+    res.append(incident_face_to_html(halfEdge));
+    res.append(incident_face_to_html(halfEdge.next));
     return res;
 }
 

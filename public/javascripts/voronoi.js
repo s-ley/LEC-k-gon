@@ -125,7 +125,7 @@ function calculate_vertices(externalEdge){
     top_left = new Vertex(minx-eps, maxy+eps, vertices.length);
     top_right = new Vertex(maxx+eps, maxy+eps, vertices.length+1);
     bottom_left = new Vertex(minx-eps, miny-eps, vertices.length+2);
-    bottom_right = new Vertex(maxx+eps, miny-eps, vertices.length+2);
+    bottom_right = new Vertex(maxx+eps, miny-eps, vertices.length+3);
     vertices.push(top_left);
     vertices.push(top_right);
     vertices.push(bottom_left);
@@ -170,14 +170,14 @@ function intersected_by_ray_once(segment, ray){
         var x = ray.p1.x;
         var y = m*(x-segment.p1.x)+segment.p1.y;
         var intersection = new Vertex(x,y);
-        if(in_between(ray.p2, ray.p1, intersection)) return in_between(intersection, segment.p1, segment.p2);
+        if(in_between(ray.p2, ray.p1, intersection) || in_between(intersection, ray.p1, ray.p2)) return in_between(intersection, segment.p1, segment.p2);
         else return false;
     } else if(vertical(segment)){
         var m = slope(ray);
         var x = segment.p1.x;
         var y = m*(x-ray.p1.x)+ray.p1.y;
         var intersection = new Vertex(x,y);
-        if(in_between(ray.p2, ray.p1, intersection)) return in_between(intersection, segment.p1, segment.p2);
+        if(in_between(ray.p2, ray.p1, intersection) || in_between(intersection, ray.p1, ray.p2)) return in_between(intersection, segment.p1, segment.p2);
         else return false;
     }
     // both are not vertical
@@ -193,7 +193,7 @@ function intersected_by_ray_once(segment, ray){
     var x = (segment.p1.y-ray.p1.y+m2*ray.p1.x-m1*segment.p1.x)/(m2-m1);
     var y = m1*(x-segment.p1.x)+segment.p1.y;
     var intersection = new Vertex(x,y);
-    if(in_between(ray.p2, ray.p1, intersection))
+    if(in_between(ray.p2, ray.p1, intersection) || in_between(intersection, ray.p1, ray.p2))
         return in_between(intersection, segment.p1, segment.p2);
     return false;
 }
@@ -203,19 +203,19 @@ function single_point_by_ray_intersection(segment, ray){
         var m = slope(segment);
         var x = ray.p1.x;
         var y = m*(x-segment.p1.x)+segment.p1.y;
-        return new Vertex(x,y,vertices.length);
+        return new Vertex(x,y);
     } else if(vertical(segment)){
         var m = slope(ray);
         var x = segment.p1.x;
         var y = m*(x-ray.p1.x)+ray.p1.y;
-        return new Vertex(x,y,vertices.length);
+        return new Vertex(x,y);
     }
     // both are not vertical
     var m1 = slope(segment);
     var m2 = slope(ray);
     var x = (segment.p1.y-ray.p1.y+m2*ray.p1.x-m1*segment.p1.x)/(m2-m1);
     var y = m1*(x-segment.p1.x)+segment.p1.y;
-    return new Vertex(x,y,vertices.length);
+    return new Vertex(x,y);
 }
 
 function outwards_perpendicular_bisector(externalEdge){
@@ -233,8 +233,12 @@ function outwards_perpendicular_bisector(externalEdge){
         z:1
     };
     var dir = normalize_r2(cross_product(a,b));
-    var endpoint = new Vertex(vertex.x+dir.x*9, vertex.y+dir.y*9, vertices.length);
+    var endpoint = new Vertex(vertex.x+dir.x*10, vertex.y+dir.y*10);
     return new HalfEdge(vertex, endpoint);
+}
+
+function quads_equals(q1, q2){
+    return q1.orig.equals(q2.orig) && q1.dest.equals(q2.dest);
 }
 
 // Generates the voronoi edges by joining the adyacent triangles vertex.
@@ -283,7 +287,7 @@ function calculate_edges(externalEdge){
                 queue.push(edge.sym.lprev);
             } else if(!outside_edge(edge) && !outside_edge(edge.sym.lprev)){
                 edge.sym.dual.next = edge.sym.lprev.sym.dual;
-                edge.sym.lprev.sym.dual = edge.sym.dual.next;
+                edge.sym.lprev.sym.dual.prev = edge.sym.dual;
             }
             if(!edge.sym.lnext.voronoi_mark_2){
                 queue.push(edge.sym.lnext);
@@ -297,6 +301,9 @@ function calculate_edges(externalEdge){
     // GENERATE OUTSIDE EDGES
     var top_segment = new HalfEdge(top_left, top_right);
     var right_segment = new HalfEdge(top_right, bottom_right);
+    var bottom_segment = new HalfEdge(bottom_left, bottom_right);
+    var left_segment = new HalfEdge(bottom_left, top_left);
+
     var e1 = externalEdge;
     var e2 = e1.lnext;
     // Find top right corner
@@ -305,50 +312,305 @@ function calculate_edges(externalEdge){
         e1 = e2;
         e2 = e1.lnext;
     }
-    // Make the top right region
+    // TOP RIGHT BOUNDED REGION
     var left_vertex = vertices[e1.sym.incident_face];
     var right_vertex = vertices[e2.sym.incident_face];
     var vtop = single_point_by_ray_intersection(top_segment, outwards_perpendicular_bisector(e1));
-    vertices.push(vtop);
     var vright = single_point_by_ray_intersection(right_segment, outwards_perpendicular_bisector(e2));
+    vtop.idx = vertices.length;
+    vright.idx = vertices.length+1;
+    vertices.push(vtop);
     vertices.push(vright);
 
-    // Inside
-    var i0 = e2.sym.lnext.dual;
+    // HALF EDGES
+    // FROM INSIDE CCW
+    // ??? -> i0 -> i1 -> i2 -> i3 -> i4 -> i5 -> ???
     var i1 = new HalfEdge(right_vertex, vright);
-    var i1_rev = new HalfEdge(vright, right_vertex);
-    i1.twin = i1_rev;
-    i1_rev.twin = i1;
     var i2 = new HalfEdge(vright, top_right);
-    var i2_rev = new HalfEdge(top_right, vright);
-    i2.twin = i2_rev;
-    i2_rev.twin = i2;
     var i3 = new HalfEdge(top_right, vtop);
-    var i3_rev = new HalfEdge(vtop, top_right);
-    i3.twin = i3_rev;
-    i3_rev.twin = i3;
     var i4 = new HalfEdge(vtop, left_vertex);
+    // if e1 and e2 are from different triangles, we have a polygon of at least 5 sides
+    // if e1 and e2 are from the same triangle, we have a polygon of 4 sides
+    var i0 = null, i5 = null;
+    if(quads_equals(e1, e2.sym.lnext.sym)){
+        i0 = i4;
+        i5 = i1;
+    } else {
+        i0 = e2.sym.lnext.dual;
+        i5 = e1.sym.lprev.dual.twin;
+    }
+    // FROM OUTSIDE CW
+    var i1_rev = new HalfEdge(vright, right_vertex);
+    var i2_rev = new HalfEdge(top_right, vright);
+    var i3_rev = new HalfEdge(vtop, top_right);
     var i4_rev = new HalfEdge(left_vertex, vtop);
+    // TWINS
     i4.twin = i4_rev;
     i4_rev.twin = i4;
-    var i5 = e1.sym.lprev.dual.twin;
+    i3.twin = i3_rev;
+    i3_rev.twin = i3;
+    i2.twin = i2_rev;
+    i2_rev.twin = i2;
+    i1.twin = i1_rev;
+    i1_rev.twin = i1;
 
-    // Incident face
+    // Incident faces
+    // INSIDE
     i1.incident_face = i2.incident_face = i3.incident_face = i4.incident_face = e1.dest;
+    // OUTSIDE
+    i2_rev.incident_face = i3_rev.incident_face = outside_point;
+    
     // Next Prev
+    // INSIDE
     i0.next = i1; i1.next = i2; i2.next = i3; i3.next = i4; i4.next = i5;
     i5.prev = i4; i4.prev = i3; i3.prev = i2; i2.prev = i1; i1.prev = i0;
-    // Outside Face
-    // Incident face
-    i2.incident_face = i3.incident_face = outside_point;
-    // Next Prev
-    i2_rev.prev = i3_rev;
-    i3_rev.next = i2_rev;
-
+    // OUTSIDE
+    i2_rev.prev = i3_rev; i3_rev.next = i2_rev;
+    // DUALS
+    e1.dual = i4_rev;
+    e1.sym.dual = i4;
+    e2.dual = i1;
+    e2.sym.dual = i1_rev;
+    // SAVE
     edges.push(i1);
     edges.push(i2);
     edges.push(i3);
     edges.push(i4);
+    edges.push(i1_rev);
+    edges.push(i2_rev);
+    edges.push(i3_rev);
+    edges.push(i4_rev);
+
+    // Loop outside until you return to the top right corner
+    var destination = e1.lprev.lprev;
+    var current_boundary = right_segment;
+    var next_boundary = bottom_segment;
+    var current_intersection_point = null;
+    var next_intersection_point = null;
+    var back_vertex = null; 
+    var front_vertex = null;
+    var next_corner = bottom_right;
+    var in_corner = null;
+    do {
+        e1 = e2;
+        e2 = e1.lnext;
+        in_corner = intersected_by_ray_once(current_boundary, outwards_perpendicular_bisector(e1)) && intersected_by_ray_once(next_boundary, outwards_perpendicular_bisector(e2));
+        if(!in_corner){
+            // Create lines, we have either a triangle or a 4+ sided polygon
+            back_vertex = e1.dual.p1;
+            front_vertex = e2.sym.lnext.dual.p2;
+            current_intersection_point = e1.dual.p2;
+            next_intersection_point = single_point_by_ray_intersection(current_boundary, outwards_perpendicular_bisector(e2));
+            next_intersection_point.idx = vertices.length;
+            vertices.push(next_intersection_point);
+
+            i1 = new HalfEdge(front_vertex, next_intersection_point);
+            i2 = new HalfEdge(next_intersection_point, current_intersection_point);
+            i3 = e1.sym.dual;   
+            if(quads_equals(e1, e2.sym.lnext.sym)){ // triangle
+                i0 = i3;
+                i4 = i1;
+            } else {
+                i0 = e2.sym.lnext.dual;
+                i4 = e1.sym.lprev.dual.twin;
+            }
+            // REV
+            i1_rev = new HalfEdge(next_intersection_point, front_vertex);
+            i2_rev = new HalfEdge(current_intersection_point, next_intersection_point);
+            // TWIN
+            i1.twin = i1_rev;
+            i1_rev.twin = i1;
+            i2.twin = i2_rev;
+            i2_rev.twin = i2;
+            // Incident faces
+            // INSIDE
+            i1.incident_face = i2.incident_face = i3.incident_face = e1.dest;
+            // OUTSIDE
+            i2_rev.incident_face = outside_point;
+            // Next Prev
+            // INSIDE
+            i0.next = i1; i1.next = i2; i2.next = i3; i3.next = i4;
+            i4.prev = i3; i3.prev = i2; i2.prev = i1; i1.prev = i0;
+            // OUTSIDE
+            i2_rev.prev = i3.twin.next.twin;
+            i3.twin.next.twin.next = i2_rev;
+            // DUAL
+            e2.dual = i1;
+            e2.sym.dual = i1_rev;
+            // SAVE
+            edges.push(i1);
+            edges.push(i2);
+            edges.push(i1_rev);
+            edges.push(i2_rev);
+        } else {
+            // Create lines, we have either a 4 or a 5+ sided polygon
+            back_vertex = e1.dual.p1;
+            front_vertex = e2.sym.lnext.dual.p2;
+            current_intersection_point = e1.dual.p2;
+            next_intersection_point = single_point_by_ray_intersection(next_boundary, outwards_perpendicular_bisector(e2));
+            next_intersection_point.idx = vertices.length;
+            vertices.push(next_intersection_point);
+            // New edges
+            i1 = new HalfEdge(front_vertex, next_intersection_point);
+            i2 = new HalfEdge(next_intersection_point, next_corner);
+            i3 = new HalfEdge(next_corner, current_intersection_point);
+            i4 = e1.sym.dual;
+            if(quads_equals(e1, e2.sym.lnext.sym)){ // 4 sided
+                i0 = i4;
+                i5 = i1;
+            } else {
+                i0 = e2.sym.lnext.dual;
+                i5 = e1.sym.lprev.dual.twin;
+            }
+            // REV
+            i1_rev = new HalfEdge(next_intersection_point, front_vertex);
+            i2_rev = new HalfEdge(next_corner, next_intersection_point);
+            i3_rev = new HalfEdge(current_intersection_point, next_corner);
+            // TWIN
+            i1.twin = i1_rev;
+            i1_rev.twin = i1;
+            i2.twin = i2_rev;
+            i2_rev.twin = i2;
+            i3.twin = i3_rev;
+            i3_rev.twin = i3;
+            // Incident faces
+            // INSIDE
+            i1.incident_face = i2.incident_face = i3.incident_face = i4.incident_face = e1.dest;
+            // OUTSIDE
+            i2_rev.incident_face = i3_rev.incident_face = outside_point;
+            // Next Prev
+            // INSIDE
+            i0.next = i1; i1.next = i2; i2.next = i3; i3.next = i4; i4.next = i5;
+            i5.prev = i4; i4.prev = i3; i3.prev = i2; i2.prev = i1; i1.prev = i0;
+            // OUTSIDE
+            i3_rev.next = i2_rev; i2_rev.prev = i3_rev; // corner
+            i3_rev.prev = i4.twin.next.twin; i4.twin.next.twin.next = i3_rev; // previous cell
+            // DUAL
+            e2.dual = i1;
+            e2.sym.dual = i1_rev;
+            // SAVE
+            edges.push(i1);
+            edges.push(i2);
+            edges.push(i3);
+            edges.push(i1_rev);
+            edges.push(i2_rev);
+            edges.push(i3_rev);
+
+            // Change boundaries
+            current_boundary = next_boundary;
+            if(current_boundary.equals(bottom_segment)){
+                next_boundary = left_segment;
+                next_corner = bottom_left;
+            } else if(current_boundary.equals(left_segment)){
+                next_boundary = top_segment;
+                next_corner = top_left;
+            } else if(current_boundary.equals(top_segment)){
+                next_boundary = right_segment;
+                next_corner = top_right;
+            } else if(current_boundary.equals(right_segment)){
+                next_boundary = bottom_segment;
+                next_corner = bottom_right;
+            } else {
+                console.log('Error: voronoi.js line 464');
+            }
+        }
+    } while(!quads_equals(e1, destination));
+
+    e1 = e2;
+    e2 = e1.lnext;
+
+    // Last cell
+    if(current_boundary.equals(top_segment)){
+        // Create lines, we have either a triangle or a 4+ sided polygon
+        back_vertex = e1.dual.p1;
+        front_vertex = e2.sym.lnext.dual.p2;
+        current_intersection_point = e1.dual.p2;
+        next_intersection_point = vtop;
+
+        i1 = e2.dual;
+        i2 = new HalfEdge(next_intersection_point, current_intersection_point);
+        i3 = e1.sym.dual;   
+        if(quads_equals(e1, e2.sym.lnext.sym)){ // triangle
+            i0 = i3;
+            i4 = i1;
+        } else {
+            i0 = e2.sym.lnext.dual;
+            i4 = e1.sym.lprev.dual.twin;
+        }
+        // REV
+        i1_rev = i1.twin;
+        i2_rev = new HalfEdge(current_intersection_point, next_intersection_point);
+        // TWIN
+        i2.twin = i2_rev;
+        i2_rev.twin = i2;
+        // Incident faces
+        // INSIDE
+        i1.incident_face = i2.incident_face = i3.incident_face = e1.dest;
+        // OUTSIDE
+        i2_rev.incident_face = outside_point;
+        // Next Prev
+        // INSIDE
+        i0.next = i1; i1.next = i2; i2.next = i3; i3.next = i4;
+        i4.prev = i3; i3.prev = i2; i2.prev = i1; i1.prev = i0;
+        // OUTSIDE
+        i2_rev.prev = i3.twin.next.twin; i3.twin.next.twin.next = i2_rev; // prev cell
+        i2_rev.next = i1.twin.prev.twin; i1.twin.prev.twin.prev = i2_rev; // next cell
+        // DUAL
+        e2.dual = i1;
+        e2.sym.dual = i1_rev;
+        // SAVE
+        edges.push(i2);
+        edges.push(i2_rev);
+    } else {
+        // Create lines, we have either a 4 or a 5+ sided polygon
+        back_vertex = e1.dual.p1;
+        front_vertex = e2.sym.lnext.dual.p2;
+        current_intersection_point = e1.dual.p2;
+        next_intersection_point = vtop;
+        // New edges
+        i1 = e2.dual;
+        i2 = new HalfEdge(next_intersection_point, next_corner);
+        i3 = new HalfEdge(next_corner, current_intersection_point);
+        i4 = e1.sym.dual;
+        if(quads_equals(e1, e2.sym.lnext.sym)){ // 4 sided
+            i0 = i4;
+            i5 = i1;
+        } else {
+            i0 = e2.sym.lnext.dual;
+            i5 = e1.sym.lprev.dual.twin;
+        }
+        // REV
+        i1_rev = i1.twin;
+        i2_rev = new HalfEdge(next_corner, next_intersection_point);
+        i3_rev = new HalfEdge(current_intersection_point, next_corner);
+        // TWIN
+        i2.twin = i2_rev;
+        i2_rev.twin = i2;
+        i3.twin = i3_rev;
+        i3_rev.twin = i3;
+        // Incident faces
+        // INSIDE
+        i1.incident_face = i2.incident_face = i3.incident_face = i4.incident_face = e1.dest;
+        // OUTSIDE
+        i2_rev.incident_face = i3_rev.incident_face = outside_point;
+        // Next Prev
+        // INSIDE
+        i0.next = i1; i1.next = i2; i2.next = i3; i3.next = i4; i4.next = i5;
+        i5.prev = i4; i4.prev = i3; i3.prev = i2; i2.prev = i1; i1.prev = i0;
+        // OUTSIDE
+        i3_rev.next = i2_rev; i2_rev.prev = i3_rev; // corner
+        i3_rev.prev = i4.twin.next.twin; i4.twin.next.twin.next = i3_rev; // previous cell
+        i2_rev.next = i1.twin.prev.twin; i1.twin.prev.twin.prev = i2_rev; // next cell
+        // DUAL
+        e2.dual = i1;
+        e2.sym.dual = i1_rev;
+        // SAVE
+        edges.push(i2);
+        edges.push(i3);
+        edges.push(i2_rev);
+        edges.push(i3_rev);
+    }
+
 }
 
 

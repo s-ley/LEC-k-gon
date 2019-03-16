@@ -18,6 +18,9 @@ export const HalfEdge = function(p1, p2){
         twin: null,
         next: null,
         prev: null,
+        equals: function(he){
+            return this.p1.equals(he.p1) && this.p2.equals(he.p2);
+        }
     }
 }
 export const Face = function(p){
