@@ -1,4 +1,5 @@
 import { polygon } from "./polygon.js";
+import {Voronoi_UI} from './UI/voronoi_ui.js';
 
 var eps;
 // Set for logic of lines drawn
@@ -10,6 +11,7 @@ function has(o, x, y){return !!(o[x] && o[x][y]);}
 
 // Points drawn
 var points = [];
+var boundingbox = [0,0,0,0];
 
 // Create points by clicking
 var getMouseCoords = function(e, i) {
@@ -39,20 +41,34 @@ var click_event = function(e) {
 
 // Board and drawing functions
 var board_ref = null;
-function create_board(bb){
+function set_bounding_box(){
+    var bb = boundingbox;
     eps = Math.max(bb[1]-bb[3], bb[2]-bb[0])*0.1;
     bb[0] -= eps; bb[1] += eps; bb[2] += eps; bb[3] -= eps;
-    board_ref = JXG.JSXGraph.initBoard('box', {boundingbox: bb, axis:true});
+    board_ref.setBoundingBox(bb);
+}
+function create_board(bb){
+    boundingbox = bb;
+    board_ref = JXG.JSXGraph.initBoard('box', {boundingbox: bb, axis:false });
+    set_bounding_box();
     // Board events
     board_ref.on('down', click_event);
 }
 
+
 // p1 and p2 must have .idx field
 // width and dash are numbers
-function draw_segment(p1, p2, width, dash){
+function draw_segment(p1, p2, width, dash, color, halfEdge){
     var idx1 = Math.min(p1.idx, p2.idx), idx2 = Math.max(p1.idx, p2.idx);
     if(!has(lines, idx1, idx2)){
-        var line = board_ref.create('line',[points[idx1],points[idx2]], {straightFirst:false, straightLast:false, strokeWidth:width, dash:dash});
+        var line = board_ref.create('line',[points[p1.idx],points[p2.idx]], {straightFirst:false, straightLast:false, strokeWidth:width, dash:dash, strokeColor: color});
+        if(halfEdge){
+            line.halfEdge = halfEdge;
+            line.on('up', function(e){
+                Voronoi_UI.dcel(this.halfEdge);
+            });
+        }
+        
         add(lines, idx1, idx2, line);
     }
 }
@@ -60,6 +76,13 @@ function draw_point(x, y, fillColor){
     var p = board_ref.create('point', [x, y], {size: 2, name:`${points.length}`, face:'<>', color: fillColor, fixed: true});
     p.idx = points.length;
     points.push(p);
+    if(p.coords.usrCoords[1] < boundingbox[0] || p.coords.usrCoords[1] > boundingbox[2] || p.coords.usrCoords[2] < boundingbox[3] || p.coords.usrCoords[2] > boundingbox[1]){
+        boundingbox[0] = Math.min(boundingbox[0], p.coords.usrCoords[1]);
+        boundingbox[2] = Math.max(boundingbox[2], p.coords.usrCoords[1]);
+        boundingbox[3] = Math.min(boundingbox[3], p.coords.usrCoords[2]);
+        boundingbox[1] = Math.max(boundingbox[1], p.coords.usrCoords[2]);
+        set_bounding_box();
+    }
     return p;
 }
 function reset_board(bb){
@@ -72,11 +95,15 @@ function reset_board(bb){
 function get_points(){
     return points;
 }
+function get_bounding_box(){
+    return boundingbox;
+}
 
 export const board = {
     init: create_board,
     add_point: draw_point,
     add_segment: draw_segment,
     reset: reset_board,
-    get_points: get_points
+    get_points: get_points,
+    get_bounding_box: get_bounding_box
 };

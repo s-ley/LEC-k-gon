@@ -5,35 +5,82 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Mayor Círculo Vacío con restricciones de ubicación.</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="stylesheet" href="css/style.css">
     <!-- JSX Graph -->
     <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
-    <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
+    <script type="text/javascript" src="./javascripts/jsxgraphcore.js"></script>
 </head>
 <body>
-    <style>
-        .Container{
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-        }
-        .Container>div{
-            padding: 10px;
-        }
-    </style>
-    <h1>Mayor Círculo Vacío con restricciones de ubicación.</h1>
+    
+    <div class="UI">
+        <div class="Plane">
+            <div id="box" class="jxgbox"></div>
+            <div class="Controls">
+                <div id="Reset">Reiniciar</div>
+            </div>
+        </div>
+        <div class="Data">
+            <div class="Voronoi">
+                <h3>Voronoi</h3>
+                <div class="Sections">
+                    <div class="Section">
+                        <p>Genera Diagrama de Voronoi con Frontera (Se requieren al menos 3 sitios)</p>
+                        <button id='Voronoi'>Genera Voronoi</button>
+                    </div>
+                    <div class="Section">
+                        <p>DCEL (Hacer click a alguna arista para ver su representación)</p>
+                        <div class="DCEL"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="Sites">
+                <h3>Sites</h3>
+                <div class="Sections">
+                    <div class="Section Generator">
+                        <p>Generador de Sitios aleatorio</p>
+                        <div id='Random'>
+                            <input type="range" min="10" max="100" class="slider">
+                            <span></span>
+                            <button>Genera este número de sitios</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="Menu">
+            <div id="ShowSite">Sites</div>
+            <div id="ShowVoronoi">Voronoi</div>
+        </div>
+    </div>
+    <div style="display:grid; grid-template-columns: 1fr 2fr">
+        <div>
+            <div style='display: grid; grid-template-columns: 1fr 1fr'>
+                <h3>Polygon</h3>
+                <button id='ClosePolygon' style='height: 30px; top: 50%; transform: translateY(25%);'>Close Polygon</button>
+            </div>
+            Click en el mapa
+            <ol id='Polygon' style="height:400px; width:130px; overflow-y: scroll;"></ol>
+        </div>
+        <div style='margin-left: 30px;'>
+            <h3>Sites</h3>
+            <ol id='Sites' style="height:400px; width:130px; overflow-y: scroll;"></ol>
+        </div>
+    </div>
+    <div>
+        <div id='Download'></div>
+    </div>
     <div class='Container'>
         <div style='border: 1px solid black;'>
             <input type='file' id='files' name="files[]" >
             <button id='Load'>Load Sites from File</button>
         </div>
-        <div id='Random' style='border: 1px solid black;'>
-            <input type="range" min="10" max="100" class="slider">
-            <span></span>
-            <button>Generate Random Sites</button>
-        </div>
+        
     </div>
     <div class='Container'>
         <div style='border: 1px solid black; display: flex; float: left;'>
             <button id='Delaunay'>Generate Delaunay of Sites</button>
+            
             <button id='EnablePolygon'>Enable: Add vertex by click</button>
             <button id='DisablePolygon'>Disable: Add vertex by click</button>
         </div>
@@ -42,29 +89,11 @@
             <button style='height: 30px; top: 50%; transform: translateY(25%);'>Clear</button>
         </div>
     </div>
-    <div style="display:grid; grid-template-columns: 1fr 1fr">
-        <div id="box" class="jxgbox" style="width:500px; height:500px;"></div>
-        <div style="display:grid; grid-template-columns: 1fr 2fr">
-            <div>
-                <div style='display: grid; grid-template-columns: 1fr 1fr'>
-                    <h3>Polygon</h3>
-                    <button id='ClosePolygon' style='height: 30px; top: 50%; transform: translateY(25%);'>Close Polygon</button>
-                </div>
-                Click en el mapa
-                <ol id='Polygon' style="height:400px; width:130px; overflow-y: scroll;"></ol>
-            </div>
-            <div style='margin-left: 30px;'>
-                <h3>Sites</h3>
-                <ol id='Sites' style="height:400px; width:130px; overflow-y: scroll;"></ol>
-            </div>
-        </div>
-    </div>
     
     <!-- Jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <!-- Custom Files -->
     <script src="./javascripts/delaunay-triangulation/delaunay.js"></script>
-    <script src="./javascripts/delaunay/delaunay.js"></script>
     <script type="module" src="./javascripts/main.js"></script>
 </body>
 </html>

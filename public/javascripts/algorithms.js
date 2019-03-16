@@ -1,13 +1,20 @@
-import {DCEL, Vertex} from './data_structures/DCEL.js';
+import {Vertex} from './data_structures/DCEL.js';
+import {voronoi} from './voronoi.js';
+
 
 // Be careful to not have duplicate points
 function delaunay_quads_guibas_stolfi(board_points){
     if(board_points.length <= 1)
     return;
-    var points = board_points.map((p, idx) => new Vertex(p.coords.usrCoords[1], p.coords.usrCoords[2], idx));
+    var points = board_points.map((p, idx) => {
+        var nxt = new Vertex(p.coords.usrCoords[1], p.coords.usrCoords[2], idx);
+        nxt.point_index = p.idx;
+        return nxt;
+    });
     var delaunay = Delaunay(points);
     return delaunay.getQuads();
 }
+
 function get_faces(externalEdge){
     var index = 0;
     var queue = [externalEdge];
@@ -31,8 +38,8 @@ function get_faces(externalEdge){
                     tmp = [];
                 }
                 if (!curr.sym.mark)
-                    queue.push(curr.sym);
-
+                queue.push(curr.sym);
+                
                 curr.mark = true;
                 curr = curr.lnext;
             } while(curr != edge);
@@ -43,5 +50,6 @@ function get_faces(externalEdge){
 
 export const algorithms = {
     delaunay: delaunay_quads_guibas_stolfi,
+    voronoi: voronoi.get,
     get_faces: get_faces
 };

@@ -1,11 +1,12 @@
 import { board } from "./board.js";
 import { sites } from "./sites.js";
 import { polygon } from "./polygon.js";
+import {Voronoi_UI} from './UI/voronoi_ui.js';
 
 // TODO:
 // Verificar que los puntos no puedan estar a distancia menor que 0.01
 
-var numPoints = 20;
+var numPoints = 10;
 var minx = -50, maxx = 50;
 var miny = -50, maxy = 50;
 
@@ -22,6 +23,7 @@ $('#Random button').on('click', (e) => {
     for(var i=0;i<numPoints;i++) {
         sites.add(Math.random()*(maxx-minx)+minx, Math.random()*(maxy-miny)+miny, 'red');
     }
+    Voronoi_UI.show();
 });
 
 $(document).ready(()=>{
