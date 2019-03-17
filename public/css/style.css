@@ -1,6 +1,7 @@
 :root{
     --border-radius-size: 10px;
     --distance-between-elements: 10px;
+    --UI-height: 35em;
 }
 *{
     font-family: 'Arial';
@@ -8,13 +9,14 @@
 .UI {
     display: grid;
     grid-template-columns: 1fr 1fr 40px;
-    height: 35em;
+    height: var(--UI-height);
     padding: var(--distance-between-elements);
     padding-bottom: 20px;
     border: 1px solid black;
     border-radius: var(--border-radius-size);
 
     background-color: #506377;
+    margin-bottom: 3em;
 }
 /* Left Side */
 .Plane {
@@ -27,6 +29,7 @@
     padding-left: 0;
     display: flex;
     float: left;
+    cursor: pointer;
 }
 .Plane .Controls>div{
     border-radius: var(--border-radius-size);
@@ -48,6 +51,8 @@
     margin-right: var(--distance-between-elements);
     padding: var(--distance-between-elements);
     background-color: #fff;
+    height: calc(var(--UI-height) * 0.96);
+    overflow: hidden;
 }
 .Data h3{
     margin: 0;
@@ -57,8 +62,13 @@
     border: 1px solid black;
     border-radius: var(--border-radius-size);
     padding: var(--distance-between-elements);
+    overflow-y: scroll;
+    height: calc(var(--UI-height) * 0.8);
 }
-
+.Data .Section:nth-last-child(n+2){
+    border-bottom: 1px solid black;
+    padding-bottom: 1em;
+}
 
 /* Menu buttons */
 .Menu>div{
@@ -68,6 +78,7 @@
     border: 1px solid black;
     border-radius: var(--border-radius-size);
     background-color: #fff;
+    cursor: pointer;
 }
 
 /* Old, must be deleted at some point */

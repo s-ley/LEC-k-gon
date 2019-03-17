@@ -23,10 +23,9 @@ export const HalfEdge = function(p1, p2){
         }
     }
 }
-export const Face = function(p){
+export const Face = function(p, he){
     return {
         identifier: p,
-        outer_component: null,
-        inner_component: null
+        incident_edge: he
     }
 }

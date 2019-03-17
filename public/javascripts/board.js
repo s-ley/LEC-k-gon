@@ -43,7 +43,7 @@ var click_event = function(e) {
 var board_ref = null;
 function set_bounding_box(){
     var bb = boundingbox;
-    eps = Math.max(bb[1]-bb[3], bb[2]-bb[0])*0.1;
+    eps = Math.max(Math.max(bb[1]-bb[3], bb[2]-bb[0])*0.2, 10);
     bb[0] -= eps; bb[1] += eps; bb[2] += eps; bb[3] -= eps;
     board_ref.setBoundingBox(bb);
 }

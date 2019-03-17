@@ -34,8 +34,35 @@
                     </div>
                 </div>
             </div>
+            <div class="Polygon">
+                <h3>Polígono</h3>
+                <div class="Sections">
+                    <div class="Section">
+                        <p>Creación manual</p>
+                        <button id='EnablePolygon'>Habilita: Agregar vértice con click.</button>
+                        <button id='DisablePolygon'>Deshabilita: Agregar vértice con click.</button>
+                        <button id='ClosePolygon'>Unir primer vértice con ultimo</button>
+                    </div>
+                    <div class="Section FileLoader">
+                        <p>Cargar de archivo</p>
+                        <input type='file' id='PolygonFile' name="files[]" >
+                        <button id='LoadPolygon'>Cargar</button>
+                    </div>
+                    <div class="Section Examples">
+                        <p>Ejemplos</p>
+                        <button class="1">Ejemplo1</button>
+                        <button class="2">Ejemplo2</button>
+                        <button class="3">Ejemplo3</button>
+                        <button class="4">Ejemplo4</button>
+                    </div>
+                    <div class="Section">
+                        <p>Lista de vértices</p>
+                        <ol id='Polygon'></ol>
+                    </div>
+                </div>
+            </div>
             <div class="Sites">
-                <h3>Sites</h3>
+                <h3>Sitios</h3>
                 <div class="Sections">
                     <div class="Section Generator">
                         <p>Generador de Sitios aleatorio</p>
@@ -45,44 +72,38 @@
                             <button>Genera este número de sitios</button>
                         </div>
                     </div>
+                    <div class="Section">
+                        <p>Cargar puntos de archivo</p>
+                        <input type='file' id='files' name="files[]" >
+                        <button id='Load'>Cargar</button>
+                    </div>
+                    <div class="Section Examples">
+                        <p>Ejemplos</p>
+                        <button class="1">Ejemplo1</button>
+                        <button class="2">Ejemplo2</button>
+                        <button class="3">Ejemplo3</button>
+                        <button class="4">Ejemplo4</button>
+                    </div>
+                    <div class="Section">
+                        <p>Lista de sitios</p>
+                        <ol id='Sites'></ol>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="Menu">
-            <div id="ShowSite">Sites</div>
+            <div id="ShowSite">Sitios</div>
+            <div id="ShowPolygon">Polígono</div>
             <div id="ShowVoronoi">Voronoi</div>
-        </div>
-    </div>
-    <div style="display:grid; grid-template-columns: 1fr 2fr">
-        <div>
-            <div style='display: grid; grid-template-columns: 1fr 1fr'>
-                <h3>Polygon</h3>
-                <button id='ClosePolygon' style='height: 30px; top: 50%; transform: translateY(25%);'>Close Polygon</button>
-            </div>
-            Click en el mapa
-            <ol id='Polygon' style="height:400px; width:130px; overflow-y: scroll;"></ol>
-        </div>
-        <div style='margin-left: 30px;'>
-            <h3>Sites</h3>
-            <ol id='Sites' style="height:400px; width:130px; overflow-y: scroll;"></ol>
         </div>
     </div>
     <div>
         <div id='Download'></div>
-    </div>
-    <div class='Container'>
-        <div style='border: 1px solid black;'>
-            <input type='file' id='files' name="files[]" >
-            <button id='Load'>Load Sites from File</button>
-        </div>
-        
+        <div id="DownloadPolygon"></div>
     </div>
     <div class='Container'>
         <div style='border: 1px solid black; display: flex; float: left;'>
             <button id='Delaunay'>Generate Delaunay of Sites</button>
-            
-            <button id='EnablePolygon'>Enable: Add vertex by click</button>
-            <button id='DisablePolygon'>Disable: Add vertex by click</button>
         </div>
         <div id='Error' style='display: grid; grid-template-columns: 1fr 100px; border: 1px solid black;'>
             <p style='color: red;'></p>

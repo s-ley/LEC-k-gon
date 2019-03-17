@@ -1,6 +1,7 @@
 import {UI} from './UI.js';
 import {sites} from '../sites.js';
 
+// Helper functions
 function show_generator(){
     $('#Voronoi').css('display', 'block');
 }
