@@ -85,6 +85,23 @@ function draw_point(x, y, fillColor){
     }
     return p;
 }
+function draw_circle(vertex,radius,width,color,fillColor){
+    var p = board_ref.create('point', [vertex.coords.usrCoords[1]+radius, vertex.coords.usrCoords[2]], {
+        size: 2, opacity: 0, fixed: true, name: ''
+    });
+    var c1 = board_ref.create('circle', [vertex, p], {strokeWidth: width, strokeColor: color});
+    return {
+        point: p,
+        circle: c1
+    }
+}
+function delete_circle(data){
+    board_ref.removeObject(data.circle);
+    board_ref.removeObject(data.point);
+}
+function delete_point(p){
+    board_ref.removeObject(p);
+}
 function reset_board(bb){
     points = [];
     lines = {};
@@ -103,6 +120,9 @@ export const board = {
     init: create_board,
     add_point: draw_point,
     add_segment: draw_segment,
+    add_circle: draw_circle,
+    remove_circle: delete_circle,
+    remove_point: delete_point,
     reset: reset_board,
     get_points: get_points,
     get_bounding_box: get_bounding_box

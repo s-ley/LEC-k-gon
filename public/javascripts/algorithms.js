@@ -50,6 +50,5 @@ function get_faces(externalEdge){
 
 export const algorithms = {
     delaunay: delaunay_quads_guibas_stolfi,
-    voronoi: voronoi.get,
     get_faces: get_faces
 };

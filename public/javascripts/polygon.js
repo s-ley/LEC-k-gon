@@ -2,6 +2,7 @@ import {board} from './board.js';
 import {error} from './error.js';
 import {polygon_examples} from './Examples/polygon_examples.js';
 import {Voronoi_UI} from './UI/voronoi_ui.js';
+import { Vertex, HalfEdge } from './data_structures/DCEL.js';
 
 var start = false;
 var finished = false;
@@ -59,6 +60,25 @@ function add_vertex(x,y,fillColor){
 function get_vertex_list(){
     return polygon_ccw;
 }
+function get_dcel(){
+    var vertices = polygon_ccw.map(v => {
+        var nxt = new Vertex(v.coords.usrCoords[1], v.coords.usrCoords[2]);
+        nxt.point_index = v.idx;
+        return nxt;
+    });
+    var edges = [];
+    for(var i = 0; i<vertices.length; i++){
+        edges.push(new HalfEdge(vertices[i], vertices[(i+1)%vertices.length]));
+    }
+    for(var i = 0; i<edges.length; i++){
+        edges[i].next = edges[(i+1)%edges.length];
+        edges[(i+1)%edges.length].prev = edges[i];
+    }
+    return {
+        vertices: vertices,
+        edges: edges
+    }
+}
 function enable_add(){
     start = true;
 }
@@ -71,6 +91,7 @@ export const polygon = {
     finish: close_polygon,
     reset: reset_list,
     get: get_vertex_list,
+    DCEL: get_dcel,
     enable: enable_add,
     disable: disable_add
 }

@@ -5,6 +5,7 @@ import { error } from './error.js';
 import {Voronoi_UI} from './UI/voronoi_ui.js';
 import {Sites_UI} from './UI/sites_ui.js';
 import {Polygon_UI} from './UI/polygon_ui.js';
+import {LEC_UI} from './UI/LEC_ui.js';
 import { sites } from "./sites.js";
 import { polygon } from "./polygon.js";
 
@@ -20,6 +21,9 @@ $( document ).ready(function() {
     });
     $('.Menu #ShowPolygon').on('click', function(e){
         Polygon_UI.show();
+    });
+    $('.Menu #ShowLEC').on('click', function(e){
+        LEC_UI.show();
     });
     $('.Plane .Controls #Reset').on('click', function(e){
         board.reset([-3, 3, 3, -3]);

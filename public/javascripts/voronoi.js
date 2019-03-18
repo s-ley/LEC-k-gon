@@ -2,6 +2,7 @@ import {board} from './board.js';
 import { algorithms } from "./algorithms.js";
 import { sites } from './sites.js';
 import {Vertex, HalfEdge} from './data_structures/DCEL.js';
+import { LEC_UI } from './UI/LEC_ui.js';
 
 // Author: Santiago Ley
 // Builds the DCEL of the voronoi diagram using the result of the library that builds the delaunay triangulation
@@ -23,6 +24,7 @@ var points = [];
 // DCEL
 var vertices = [];
 var edges = [];
+var faces = [];
 // Global references to the boundary corners
 var top_left, top_right, bottom_left, bottom_right;
 // Resets global variables
@@ -234,6 +236,10 @@ function calculate_vertices(externalEdge){
             curr = edge;
             var triangle = [];
             do{
+                if(!curr.orig.mark_face){
+                    faces.push(curr.orig);
+                    curr.orig.mark_face = true;
+                }
                 triangle.push(curr.orig);
                 
                 if (!curr.sym.voronoi_mark_1)
@@ -284,9 +290,9 @@ function calculate_edges(externalEdge){
             if(!outside_edge(edge)){   
                 // Join two voronoi vertices
                 he1 = new HalfEdge(vertices[edge.incident_face], vertices[edge.sym.incident_face]);
-                he1.incident_face = edge.dest;
+                he1.incident_face = edge.dest; edge.dest.incident_edge = he1;
                 he2 = new HalfEdge(vertices[edge.sym.incident_face], vertices[edge.incident_face]);
-                he2.incident_face = edge.orig;
+                he2.incident_face = edge.orig; edge.orig.incident_edge = he2;
                 edge.dual = he2;
                 edge.sym.dual = he1;
                 he1.twin = he2;
@@ -371,8 +377,8 @@ function calculate_edges(externalEdge){
     i2.twin = i2_rev; i2_rev.twin = i2;
     i1.twin = i1_rev; i1_rev.twin = i1;
     // Assign incident_face references
-    i1.incident_face = i2.incident_face = i3.incident_face = i4.incident_face = e1.dest;
-    i2_rev.incident_face = i3_rev.incident_face = outside_point;
+    i1.incident_face = i2.incident_face = i3.incident_face = i4.incident_face = e1.dest; e1.dest.incident_edge = i1;
+    i2_rev.incident_face = i3_rev.incident_face = outside_point; outside_point.incident_edge = i2_rev;
     // Assign next and prev references of those inside, and some outside.
     i0.next = i1; i1.next = i2; i2.next = i3; i3.next = i4; i4.next = i5;
     i5.prev = i4; i4.prev = i3; i3.prev = i2; i2.prev = i1; i1.prev = i0;
@@ -425,8 +431,8 @@ function calculate_edges(externalEdge){
             i2_rev = new HalfEdge(current_intersection_point, next_intersection_point);
             i1.twin = i1_rev; i1_rev.twin = i1;
             i2.twin = i2_rev; i2_rev.twin = i2;
-            i1.incident_face = i2.incident_face = i3.incident_face = e1.dest;
-            i2_rev.incident_face = outside_point;
+            i1.incident_face = i2.incident_face = i3.incident_face = e1.dest; e1.dest.incident_edge = i1;
+            i2_rev.incident_face = outside_point; outside_point.incident_edge = i2_rev;
             i0.next = i1; i1.next = i2; i2.next = i3; i3.next = i4;
             i4.prev = i3; i3.prev = i2; i2.prev = i1; i1.prev = i0;
             i2_rev.prev = i3.twin.next.twin;
@@ -458,8 +464,8 @@ function calculate_edges(externalEdge){
             i1.twin = i1_rev; i1_rev.twin = i1;
             i2.twin = i2_rev; i2_rev.twin = i2;
             i3.twin = i3_rev; i3_rev.twin = i3;
-            i1.incident_face = i2.incident_face = i3.incident_face = i4.incident_face = e1.dest;
-            i2_rev.incident_face = i3_rev.incident_face = outside_point;
+            i1.incident_face = i2.incident_face = i3.incident_face = i4.incident_face = e1.dest; e1.dest.incident_edge = i1;
+            i2_rev.incident_face = i3_rev.incident_face = outside_point; outside_point.incident_edge = i2_rev;
             i0.next = i1; i1.next = i2; i2.next = i3; i3.next = i4; i4.next = i5;
             i5.prev = i4; i4.prev = i3; i3.prev = i2; i2.prev = i1; i1.prev = i0;
             i3_rev.next = i2_rev; i2_rev.prev = i3_rev; // corner
@@ -511,8 +517,8 @@ function calculate_edges(externalEdge){
         i1_rev = i1.twin;
         i2_rev = new HalfEdge(current_intersection_point, next_intersection_point);
         i2.twin = i2_rev; i2_rev.twin = i2;
-        i1.incident_face = i2.incident_face = i3.incident_face = e1.dest;
-        i2_rev.incident_face = outside_point;
+        i1.incident_face = i2.incident_face = i3.incident_face = e1.dest; e1.dest.incident_edge = i1;
+        i2_rev.incident_face = outside_point; outside_point.incident_edge = i2_rev;
         i0.next = i1; i1.next = i2; i2.next = i3; i3.next = i4;
         i4.prev = i3; i3.prev = i2; i2.prev = i1; i1.prev = i0;
         i2_rev.prev = i3.twin.next.twin; i3.twin.next.twin.next = i2_rev; // prev cell
@@ -541,8 +547,8 @@ function calculate_edges(externalEdge){
         i3_rev = new HalfEdge(current_intersection_point, next_corner);
         i2.twin = i2_rev; i2_rev.twin = i2;
         i3.twin = i3_rev; i3_rev.twin = i3;
-        i1.incident_face = i2.incident_face = i3.incident_face = i4.incident_face = e1.dest;
-        i2_rev.incident_face = i3_rev.incident_face = outside_point;
+        i1.incident_face = i2.incident_face = i3.incident_face = i4.incident_face = e1.dest; e1.dest.incident_edge = i1;
+        i2_rev.incident_face = i3_rev.incident_face = outside_point; outside_point.incident_edge = i2_rev;
         i0.next = i1; i1.next = i2; i2.next = i3; i3.next = i4; i4.next = i5;
         i5.prev = i4; i4.prev = i3; i3.prev = i2; i2.prev = i1; i1.prev = i0;
         i3_rev.next = i2_rev; i2_rev.prev = i3_rev; // corner
@@ -565,9 +571,19 @@ function get_voronoi(externalEdge){
         edges: edges
     }
 }
+function get_voronoi_DCEL(){
+    return {
+        vertices: vertices,
+        board_points: points,
+        edges: edges,
+        faces: faces,
+        outside_face: outside_point
+    }
+}
 // Exports
 export const voronoi = {
-    get: get_voronoi
+    find: get_voronoi,
+    get: get_voronoi_DCEL
 }
 
 // HTML EVENTS
@@ -582,4 +598,5 @@ $('#Voronoi').on('click', ()=>{
     edges.map(e => {
         board.add_segment(points[e.p1.idx], points[e.p2.idx], 1, 0, 'green', e);
     });
+    LEC_UI.show();
 });
