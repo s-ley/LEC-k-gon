@@ -1,129 +1,141 @@
-import {board} from './board.js';
-import {error} from './error.js';
-import {polygon_examples} from './Examples/polygon_examples.js';
-import {Voronoi_UI} from './UI/voronoi_ui.js';
-import { Vertex, HalfEdge } from './data_structures/DCEL.js';
+import { Vertex, VertexData, HalfEdge, HalfEdgeData } from "./data_structures/DCEL.js";
+import { Vector } from "./vector_functions.js";
+import { polygon_examples } from "./Examples/polygon_examples.js";
 
-var start = false;
-var finished = false;
-var polygon_ccw = [];
+export default class Polygon {
+    constructor(Polygon_UI=null, board_ref = null){
+        this.pointColor = 'blue';
+        this.line_width = 1;
+        this.dash = 0;
 
-// TODO:
-// Verificar que el poligono sea simple
-
-var line_width = 1;
-
-function reset_list(){
-    polygon_ccw = [];
-    finished = false;
-    $('#Polygon').html('');
-    $('#ClosePolygon').css('display', 'block');
-}
-
-function toString(){
-    return polygon_ccw.map(s => `${s.coords.usrCoords[1]} ${s.coords.usrCoords[2]}`).join(' ');
-}
-
-function close_polygon(){
-    if(finished)
-        return;
-
-    if(polygon_ccw.length < 3){
-        error.change_msg('Error: el polígono debe tener más de 2 vértices.');
-        return;
+        this.dcel = null;
+        this.UI = Polygon_UI;
+        this.board = board_ref;
+        this.manual = false;
+        this.finished = false;
+        this.reset();
     }
-    // Verificar que sea simple
-    
-    // Guardar
-    var len = polygon_ccw.length;
-    board.add_segment(polygon_ccw[len-1], polygon_ccw[0], line_width, 0, 'blue', false);
-    finished = true;
-    $('#ClosePolygon').css('display', 'none');
-    $('#DownloadPolygon').html($(`<a href="data:text/plain;charset=utf-8,${toString()}" download="polygon.txt">Descarga el Polígono</a>`));
-}
+    reset(){
+        this.dcel = {
+            vertices: [],
+            half_edges: []
+        }
+        this.manual = false;
+        this.finished = false;
+        if(this.UI !== null){
+            this.UI.list_reset();
+            this.UI.show_generators();
+            this.UI.hide_download();
+        }
+    }
+    to_string(){
+        return this.dcel.vertices.map(s => `${s.x} ${s.y}`).join(' ');
+    }
+    add_vertex(x,y){
+        if(this.finished) return;
+        var local_id = this.dcel.vertices.length;
+        var global_id = null;
+        if(this.board !== null){
+            global_id = this.board.next_point_index();
+            this.board.add_point(x,y,this.pointColor);
+        }
+        var vertex = new Vertex(x,y,new VertexData(local_id,global_id));
+        this.dcel.vertices.push(vertex);
+        if(this.UI !== null){
+            this.UI.list_add(x,y,global_id);
+        }
+        // Create edges
+        if(local_id > 0){
+            var prev = this.dcel.vertices[local_id-1];
+            local_id = this.dcel.half_edges.length;
+            global_id = null;
+            var half_edge = new HalfEdge(prev, vertex, new HalfEdgeData(local_id,global_id,null));
+            var twin = new HalfEdge(vertex, prev, new HalfEdgeData(local_id+1,global_id,null));
+            half_edge.twin = twin; twin.twin = half_edge;
+            if(this.dcel.half_edges.length > 0){
+                half_edge.prev = this.dcel.half_edges[local_id-2]; this.dcel.half_edges[local_id-2].next = half_edge;
+                twin.next = this.dcel.half_edges[local_id-1]; this.dcel.half_edges[local_id-1].prev = twin;
+            }
+            if(this.board !== null){
+                global_id = this.board.next_line_index();
+                this.board.add_bidirectional_edge(prev, vertex, this.line_width, this.dash, this.pointColor, null, null);
+                half_edge.data.global_id = global_id;
+                twin.data.global_id = global_id;
+            }
+            this.dcel.half_edges.push(half_edge);
+            this.dcel.half_edges.push(twin);
+        }
+    }
+    close(){
+        if(Vector.collinear(this.dcel.half_edges)) { // Tambien verificar que sea simple
+            console.log('Colineares');
+            return;
+        }
+        if(this.finished){
+            return;
+        }
+        var prev = this.dcel.vertices[this.dcel.vertices.length-1];
+        var vertex = this.dcel.vertices[0];
+        var local_id = this.dcel.half_edges.length;
+        var global_id = null;
+        var half_edge = new HalfEdge(prev, vertex, new HalfEdgeData(local_id,global_id,null));
+        var twin = new HalfEdge(vertex, prev, new HalfEdgeData(local_id+1,global_id,null));
+        half_edge.twin = twin; twin.twin = half_edge;
 
-function add_vertex(x,y,fillColor){
-    if(finished || !start)
-        return;
+        half_edge.prev = this.dcel.half_edges[local_id-2]; this.dcel.half_edges[local_id-2].next = half_edge;
+        twin.next = this.dcel.half_edges[local_id-1]; this.dcel.half_edges[local_id-1].prev = twin;
 
-    // HTML
-    $('#Polygon').append(`<li>(${x.toFixed(2)},${y.toFixed(2)}). Id: <strong>${board.get_points().length}</strong></li>`);
+        half_edge.next = this.dcel.half_edges[0]; this.dcel.half_edges[0].prev = half_edge;
+        twin.prev = this.dcel.half_edges[1]; this.dcel.half_edges[1].next = twin;
+        if(this.board !== null){
+            global_id = this.board.next_line_index();
+            this.board.add_bidirectional_edge(prev, vertex, this.line_width, this.dash, this.pointColor, null, null);
+            half_edge.data.global_id = global_id;
+            twin.data.global_id = global_id;
 
-    // storage
-    polygon_ccw.push(board.add_point(x,y,fillColor));
+            this.board.update_bounding_box();
+        }
+        this.dcel.half_edges.push(half_edge);
+        this.dcel.half_edges.push(twin);
 
-    if(polygon_ccw.length>1){
-        var len = polygon_ccw.length;
-        board.add_segment(polygon_ccw[len-1], polygon_ccw[len-2], line_width, 0, 'blue', false);
+        this.finished = true; // Checar que sea ccw, si no voltearlo
+        if(this.UI !== null){
+            this.UI.hide_generators();
+            this.UI.show_download(this.to_string());
+        }
+    }
+    delete_from_board(){
+        if(this.board === null) return;
+        this.dcel.half_edges.map((he, i)=>{
+            if(i%2===0){
+                this.board.delete_bidirectional_edge(he);
+            }
+        });
+        this.dcel.vertices.map(v => this.board.delete_point(v));
+        this.reset();
+    }
+    enable_manual(){
+        this.manual = true;
+    }
+    disable_manual(){
+        this.manual = false;
+    }
+    manual_enabled(){
+        return this.manual;
+    }
+    done(){
+        return this.finished;
+    }
+    get_dcel(){
+        return this.dcel;
+    }
+    load_example(num){
+        if(this.dcel.vertices.length>0){
+            return;
+        }
+        for(var i = 0; i+1<polygon_examples[num].length; i+=2){
+            this.add_vertex(polygon_examples[num][i], polygon_examples[num][i+1]);
+        }
+        this.close();
     }
 }
-function get_vertex_list(){
-    return polygon_ccw;
-}
-function get_dcel(){
-    var vertices = polygon_ccw.map(v => {
-        var nxt = new Vertex(v.coords.usrCoords[1], v.coords.usrCoords[2]);
-        nxt.point_index = v.idx;
-        return nxt;
-    });
-    var edges = [];
-    for(var i = 0; i<vertices.length; i++){
-        edges.push(new HalfEdge(vertices[i], vertices[(i+1)%vertices.length]));
-    }
-    for(var i = 0; i<edges.length; i++){
-        edges[i].next = edges[(i+1)%edges.length];
-        edges[(i+1)%edges.length].prev = edges[i];
-    }
-    return {
-        vertices: vertices,
-        edges: edges
-    }
-}
-function enable_add(){
-    start = true;
-}
-function disable_add(){
-    start = false;
-}
-
-export const polygon = {
-    add: add_vertex,
-    finish: close_polygon,
-    reset: reset_list,
-    get: get_vertex_list,
-    DCEL: get_dcel,
-    enable: enable_add,
-    disable: disable_add
-}
-
-// HTML Display
-
-$('#ClosePolygon').on('click', close_polygon);
-
-$('#EnablePolygon').on('click', ()=>{
-    start = true; 
-    $('#DisablePolygon').css('display', 'block'); 
-    $('#EnablePolygon').css('display', 'none');
-});
-$('#DisablePolygon').on('click', ()=>{
-    start = false; 
-    $('#DisablePolygon').css('display', 'none'); 
-    $('#EnablePolygon').css('display', 'block');
-});
-$('#DisablePolygon').css('display', 'none');
-function load_example(num){
-    if(polygon_ccw.length>0){
-        return;
-    }
-    enable_add();
-    for(var i = 0; i+1<polygon_examples[num].length; i+=2){
-        add_vertex(polygon_examples[num][i], polygon_examples[num][i+1], 'blue');
-    }
-    close_polygon();
-    Voronoi_UI.show();
-}
-polygon_examples.map((arr,i) => {
-    $(`.Polygon .Examples .${i+1}`).on('click', ()=>{
-        load_example(i);
-    });
-});

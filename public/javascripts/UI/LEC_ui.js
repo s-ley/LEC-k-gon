@@ -1,5 +1,5 @@
 import {UI} from './UI.js';
-import {LEC} from '../LEC.js';
+//import {LEC} from '../LEC.js';
 
 function show_section(){
     UI.clear();
@@ -20,6 +20,6 @@ export const LEC_UI = {
     change_text: change_text
 }
 
-$('.LEC .NextStep').on('click', function(e){
+/* $('.LEC .NextStep').on('click', function(e){
     LEC.next();
-});
+}); */

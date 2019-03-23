@@ -1,36 +1,30 @@
-import './file_loader.js';
-import './random_section.js';
-import { board } from './board.js';
+import './delaunay-triangulation/delaunay.js';
+import './UI/UI.js';
 import { error } from './error.js';
-import {Voronoi_UI} from './UI/voronoi_ui.js';
 import {Sites_UI} from './UI/sites_ui.js';
-import {Polygon_UI} from './UI/polygon_ui.js';
-import {LEC_UI} from './UI/LEC_ui.js';
-import { sites } from "./sites.js";
-import { polygon } from "./polygon.js";
+import { Delaunay_UI } from './UI/delaunay_ui.js';
+import Board from './board.js';
+import Sites from './sites.js';
+import DelaunayDCEL from './delaunay_dcel.js';
+import Polygon from './polygon.js';
+import { Polygon_UI } from './UI/polygon_ui.js';
+
+var board = new Board();
+var sites = new Sites(Sites_UI, board);
+var delaunay = new DelaunayDCEL(sites, Delaunay_UI, board);
+var polygon = new Polygon(Polygon_UI, board);
+board.bind_polygon(polygon);
 
 // Set everything up
 $( document ).ready(function() {
-    // UI init
+    // Init
     Sites_UI.show();
-    $('.Menu #ShowVoronoi').on('click', function(e){
-        Voronoi_UI.show();
-    });
-    $('.Menu #ShowSite').on('click', function(e){
-        Sites_UI.show();
-    });
-    $('.Menu #ShowPolygon').on('click', function(e){
-        Polygon_UI.show();
-    });
-    $('.Menu #ShowLEC').on('click', function(e){
-        LEC_UI.show();
-    });
-    $('.Plane .Controls #Reset').on('click', function(e){
-        board.reset([-3, 3, 3, -3]);
-        sites.reset();
-        polygon.reset();
-        Sites_UI.show();
-    });
-    board.init([-3, 3, 3, -3]); 
     error.update();
 });
+
+export const Main = {
+    sites: sites,
+    delaunay: delaunay,
+    board: board,
+    polygon: polygon
+}

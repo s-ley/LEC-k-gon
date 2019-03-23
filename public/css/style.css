@@ -2,6 +2,10 @@
     --border-radius-size: 10px;
     --distance-between-elements: 10px;
     --UI-height: 35em;
+    --primary-color: #970C10;
+    --secondary-color: #FDFFF0;
+    --tertiary-color: #8B8060;
+    --background-color: #1E1200;
 }
 *{
     font-family: 'Arial';
@@ -100,4 +104,33 @@
 }
 .Container>div{
     padding: 10px;
+}
+.clickable{
+    text-decoration: underline;
+    cursor: pointer;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+@media screen and (max-width: 1023px){
+    .UI{
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+    .Plane{
+        height: 30em;
+    }
+    .Data {
+        margin: 1em 0 1em 0;
+    }
+    .Menu {
+        display: flex;
+    }
+    .Menu>div{
+        writing-mode: horizontal-tb;
+    }
 }

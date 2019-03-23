@@ -94,7 +94,6 @@
 
             return faces;
         }
-
     };
 
     /*
@@ -156,6 +155,8 @@
         this.rot = rot;     // QuadEdge
         this.orig = orig;   // point
         this.mark = false;  // for drawing
+        this.mark_delaunay_1 = false; // for delaunay_dcel
+        this.dcel_half_edge = null;
     }
 
     QuadEdge.prototype = {

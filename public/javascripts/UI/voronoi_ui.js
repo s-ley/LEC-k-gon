@@ -1,5 +1,4 @@
 import {UI} from './UI.js';
-import {sites} from '../sites.js';
 
 // Helper functions
 function show_generator(){
@@ -31,11 +30,11 @@ function dcel_to_html(halfEdge){
 function show_section(){
     UI.clear();
     $('.Data .Voronoi').css('display', 'block');
-    if(sites.valid()){
+    /* if(sites.valid()){
         show_generator();
     } else {
         hide_generator();
-    }
+    } */
 }
 function hide_section(){
     $('.Data .Voronoi').css('display', 'none');
