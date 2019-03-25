@@ -77,4 +77,5 @@ $('.Polygon .Manual .Close').on('click', function(e){
 });
 $('.Polygon .Reset').on('click', function(e){
     Main.polygon.delete_from_board();
+    Main.voronoi.delete_from_board();
 });

@@ -41,7 +41,7 @@ export default class DelaunayDCEL {
         this.dcel.vertices = this.sites.get_vertices();
         if(this.dcel.vertices.length < 2 || this.triangulation_done) return;
 
-        var delaunay = new Delaunay(this.sites.get_vertices());
+        var delaunay = new Delaunay([...this.sites.get_vertices()]);
         var external_edge = delaunay.getQuads(); // See what happens with 1 point, 2 points, collinear points
 
         var queue = new Queue();
@@ -94,6 +94,7 @@ export default class DelaunayDCEL {
             this.UI.hide_edge();
             this.UI.hide_generators();
         }
+        this.build_tesselation();
     }
     build_tesselation(){
         if(!this.triangulation_done) return;
@@ -177,7 +178,7 @@ export default class DelaunayDCEL {
         this.dcel.half_edges = this.dcel.half_edges.filter((he) => { 
             return he !== null; 
         }).map((he, i) => {
-            he.local_id = i;
+            he.data.local_id = i;
             he.incident_face = this.dcel.faces[this.find(he.incident_face).data.union_find_value];
             return he;
         });

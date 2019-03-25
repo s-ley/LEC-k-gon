@@ -24,6 +24,8 @@ export const HalfEdgeData = function(local_id, global_id, collection=null){
         lec_number_of_intersections: 0,
         lec_dfs_visited: false,
         delaunay_mark: false,
+        voronoi_mark: false,
+        intersector: null,
         collection: collection
     }
 }
@@ -40,7 +42,7 @@ export const HalfEdge = function(p1, p2, data){
             return this.p1.equals(he.p1) && this.p2.equals(he.p2);
         },
         to_html: function(){
-            if(this.incident_face !== null) return `(<strong>${this.incident_face.data.local_id}<strong>)(${p1.data.global_id} -> ${p2.data.global_id})`;
+            if(this.incident_face !== null && this.incident_face.identifier !== null && this.incident_face.identifier.data !== null) return `(<strong>${this.incident_face.identifier.data.global_id}<strong>)(${p1.data.global_id} -> ${p2.data.global_id})`;
             return `(${p1.data.global_id} -> ${p2.data.global_id})`;
         }
     }

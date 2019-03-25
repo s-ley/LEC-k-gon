@@ -1,54 +1,68 @@
 import {UI} from './UI.js';
+import { Main } from '../main.js';
 
 // Helper functions
 function show_generator(){
-    $('#Voronoi').css('display', 'block');
+    $('.Voronoi .Generator').css('display', 'block');
 }
 function hide_generator(){
-    $('#Voronoi').css('display', 'none');
+    $('.Voronoi .Generator').css('display', 'none');
 }
-function halfEdge_to_html(he){
-    if(he)
-        return $(` <strong>${he.p1.point_index} -> ${he.p2.point_index}. </strong>`);
-    return $(`<strong>null.</strong>`)
-}
-function incident_face_to_html(he){
-    return `${(he && he.incident_face)?he.incident_face.point_index:'null'}.`;
-}
-function dcel_to_html(halfEdge){
-    var res = $('<p></p>');
-    res.append(halfEdge_to_html(halfEdge.prev));
-    res.append(halfEdge_to_html(halfEdge));
-    res.append(halfEdge_to_html(halfEdge.next));
-    res.append('. Incident Faces: ');
-    res.append(incident_face_to_html(halfEdge.prev));
-    res.append(incident_face_to_html(halfEdge));
-    res.append(incident_face_to_html(halfEdge.next));
-    return res;
-}
-
 function show_section(){
     UI.clear();
-    $('.Data .Voronoi').css('display', 'block');
-    /* if(sites.valid()){
-        show_generator();
-    } else {
-        hide_generator();
-    } */
+    $('.Voronoi').css('display', 'block');
 }
 function hide_section(){
-    $('.Data .Voronoi').css('display', 'none');
+    $('.Voronoi').css('display', 'none');
 }
-function display_edge(halfEdge){
-    var area = $('.Data .Voronoi .Section .DCEL');
-    area.html('');
-    area.append(dcel_to_html(halfEdge));
-    area.append(dcel_to_html(halfEdge.twin));
-}
+function show_dcel_edge(dcel_edge){
+    var content = $('<div></div>');
+    var actual = $('<p></p>');
+    var prev = '';
+    if(dcel_edge.prev !== null) prev = $(`<span>${dcel_edge.prev.to_html()}</span>`).addClass('clickable');
+    var curr = $(`<span>${dcel_edge.to_html()}</span>`);
+    var next = '';
+    if(dcel_edge.next != null) next = $(`<span>${dcel_edge.next.to_html()}</span>`).addClass('clickable');
+    var twin_p = $('<p><span>Twin: <Span></p>');
+    var twin = $(`<span>${dcel_edge.twin.to_html()}</span>`).addClass('clickable');
 
+    if(dcel_edge.data.collection !== null){
+        if(dcel_edge.prev !== null){
+            prev.on('click', ()=>{
+                dcel_edge.data.collection.select_edge(dcel_edge.prev);
+            });
+        }
+        if(dcel_edge.next !== null){
+            next.on('click', ()=>{
+                dcel_edge.data.collection.select_edge(dcel_edge.next);
+            });
+        }
+        twin.on('click', ()=>{
+            dcel_edge.data.collection.select_edge(dcel_edge.twin);
+        });
+    }
+    twin_p.append(twin);
+    actual.append(prev); actual.append(' . '); actual.append(curr); actual.append(' . '); actual.append(next);
+    content.append(actual);
+    content.append(twin_p);
+    $('.Voronoi .DCEL').html(content);
+}
+function hide_dcel_edge(){
+    $('.Voronoi .DCEL').html('');
+}
 
 export const Voronoi_UI = {
     show: show_section,
     hide: hide_section,
-    dcel: display_edge
+    show_edge: show_dcel_edge,
+    hide_edge: hide_dcel_edge,
 }
+$('.Menu #ShowVoronoi').on('click', function(e){
+    show_section();
+});
+$('.Voronoi .Generator button').on('click', function(e){
+    Main.voronoi.build();
+});
+$('.Voronoi .Reset button').on('click', function(e){
+    Main.voronoi.delete_from_board();
+});

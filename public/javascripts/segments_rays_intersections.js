@@ -95,5 +95,6 @@ function intersected_by_segment_once(seg1, seg2){
 export const Intersections = {
     segment_ray_intersects: intersected_by_ray_once,
     lines_intersection: single_point_by_ray_intersection,
-    semgent_segment_intersects: intersected_by_segment_once
+    semgent_segment_intersects: intersected_by_segment_once,
+    
 }

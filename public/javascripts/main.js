@@ -8,12 +8,18 @@ import Sites from './sites.js';
 import DelaunayDCEL from './delaunay_dcel.js';
 import Polygon from './polygon.js';
 import { Polygon_UI } from './UI/polygon_ui.js';
+import Voronoi from './voronoi.js';
+import { Voronoi_UI } from './UI/voronoi_ui.js';
 
 var board = new Board();
 var sites = new Sites(Sites_UI, board);
 var delaunay = new DelaunayDCEL(sites, Delaunay_UI, board);
 var polygon = new Polygon(Polygon_UI, board);
 board.bind_polygon(polygon);
+
+var delaunay_invisible = new DelaunayDCEL(sites);
+var voronoi = new Voronoi(delaunay_invisible, polygon, Voronoi_UI, board);
+
 
 // Set everything up
 $( document ).ready(function() {
@@ -26,5 +32,6 @@ export const Main = {
     sites: sites,
     delaunay: delaunay,
     board: board,
-    polygon: polygon
+    polygon: polygon,
+    voronoi: voronoi
 }

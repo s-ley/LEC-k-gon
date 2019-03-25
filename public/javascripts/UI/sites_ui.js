@@ -56,6 +56,7 @@ $('.Menu #ShowSite').on('click', function(e){
 $('.Sites .Reset').on('click', function(e){
     Main.delaunay.delete_from_board();
     Main.sites.delete_from_board();
+    Main.voronoi.delete_from_board();
 });
 // File generation 
 $('.Sites .LoadFile').on('click', function(e){

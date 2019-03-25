@@ -1,4 +1,4 @@
-import { Vertex, VertexData } from './data_structures/DCEL.js';
+import { Vertex, VertexData, HalfEdge, HalfEdgeData } from './data_structures/DCEL.js';
 // Returns the cross products of two vectors in R^3
 function cross_product(a, b){
     return {
@@ -75,10 +75,26 @@ function polygon_edges_are_collinear(dcel_half_edges){
     }
     return collinear;
 }
+// Returns the directed edge form the face point towards the outside
+function outwards_perpendicular_bisector(dcel_half_edge){
+    var vertex = dcel_half_edge.twin.incident_face.identifier;
+    // Find the line towards the outside using right hand rule.
+    var a = {
+        x:dcel_half_edge.p2.x-dcel_half_edge.p1.x,
+        y:dcel_half_edge.p2.y-dcel_half_edge.p1.y,
+        z:0
+    }
+    var z = { x:0, y:0, z:1 }
+    var outside = normalize_r2(cross_product(z,a), 50);
+    var endpoint = new Vertex(vertex.x+outside.x, vertex.y+outside.y);
+    return new HalfEdge(vertex, endpoint, null);
+}
+
 
 export const Vector = {
     cross_product: cross_product,
     normalize: normalize_r2,
     circumcircle: triangle_circumcircle,
-    collinear: polygon_edges_are_collinear
+    collinear: polygon_edges_are_collinear,
+    outwards_vector: outwards_perpendicular_bisector
 }

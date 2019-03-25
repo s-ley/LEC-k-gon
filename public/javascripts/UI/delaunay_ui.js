@@ -58,7 +58,6 @@ export const Delaunay_UI = {
 // Buttons and events
 $('.Delaunay .Generate').on('click', ()=>{
     Main.delaunay.build();
-    Main.delaunay.build_tesselation();
 });
 $('.Menu #ShowDelaunay').on('click', ()=>{
     Delaunay_UI.show();
