@@ -5,7 +5,6 @@ import { FileLoader } from '../file_loader.js';
 import { Vector } from '../vector_functions.js';
 
 function show_section(){
-    UI.clear();
     $('.Sites').css('display', 'block');
 }
 function hide_section(){
@@ -43,20 +42,24 @@ export const Sites_UI = {
     hide_generators: hide_generators
 }
 
-// Buttons and events
-sites_examples.map((arr,i) => {
-    $(`.Sites .Examples .${i+1}`).on('click', ()=>{
-        Main.sites.load_example(i);
-    });
-});
-$('.Menu #ShowSite').on('click', function(e){
-    show_section();
+var open = false;
+// Menu button
+$('#ShowSite').on('click', function(e){
+    if(!open){
+        show_section();
+        open = true;
+    } else {
+        hide_section();
+        open = false;
+    }
+    $('#ShowSite img').toggleClass('Flip');
 });
 // Reset
 $('.Sites .Reset').on('click', function(e){
+    Main.lec.delete_from_board();
+    Main.voronoi.delete_from_board();
     Main.delaunay.delete_from_board();
     Main.sites.delete_from_board();
-    Main.voronoi.delete_from_board();
 });
 // File generation 
 $('.Sites .LoadFile').on('click', function(e){
@@ -86,4 +89,10 @@ $('.Sites .Random button').on('click', (e) => {
         Main.sites.add_site(p.x, p.y);
     }
     Main.board.update_bounding_box();
+});
+// Examples
+sites_examples.map((arr,i) => {
+    $(`.Sites .Examples .${i+1}`).on('click', ()=>{
+        Main.sites.load_example(i);
+    });
 });

@@ -1,8 +1,6 @@
-import {UI} from './UI.js';
-//import {LEC} from '../LEC.js';
+import { Main } from '../main.js';
 
 function show_section(){
-    UI.clear();
     $('.LEC').css('display', 'block');
 }
 function hide_section(){
@@ -20,6 +18,28 @@ export const LEC_UI = {
     change_text: change_text
 }
 
-/* $('.LEC .NextStep').on('click', function(e){
-    LEC.next();
-}); */
+var open = false;
+// Menu button
+$('#ShowLEC').on('click', function(e){
+    if(!open){
+        show_section();
+        open = true;
+    } else {
+        hide_section();
+        open = false;
+    }
+    $('#ShowLEC img').toggleClass('Flip');
+});
+
+$('.LEC .NextStep').on('click', function(e){
+    Main.lec.next();
+});
+$('.LEC .Play').on('click', function(e){
+    Main.lec.play();
+});
+$('.LEC .Pause').on('click', function(e){
+    Main.lec.pause();
+});
+$('.LEC .Reset button').on('click', function(e){
+    Main.lec.delete_from_board();
+});

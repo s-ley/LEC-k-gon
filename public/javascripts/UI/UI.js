@@ -16,3 +16,8 @@ function clear(){
 export const UI = {
     clear: clear
 }
+
+$('.DisplayUI').on('click', function(e){
+    $('.DisplayUI').toggleClass('Flip');
+    $('.UI').toggleClass('Open');
+});

@@ -26,7 +26,7 @@ export default class Board {
         this.create_board();
     }
     create_board(){
-        this.board = JXG.JSXGraph.initBoard('box', {boundingbox: this.bb, axis:false });
+        this.board = JXG.JSXGraph.initBoard('box', {boundingbox: this.bb, axis:true });
         this.board.on('down', this.click_event.bind(this));
     }
     update_bounding_box(){
@@ -163,19 +163,18 @@ export default class Board {
             this.polygon.add_vertex(coords.usrCoords[1], coords.usrCoords[2]);
         }
     }
-}
-
-/* function draw_circle(vertex,radius,width,color,fillColor){
-    var p = board_ref.create('point', [vertex.coords.usrCoords[1]+radius, vertex.coords.usrCoords[2]], {
-        size: 2, opacity: 0, fixed: true, name: ''
-    });
-    var c1 = board_ref.create('circle', [vertex, p], {strokeWidth: width, strokeColor: color});
-    return {
-        point: p,
-        circle: c1
+    add_circle(dcel_vertex,radius,width,color){
+        var p = this.board.create('point', [dcel_vertex.x+radius, dcel_vertex.y], {
+            size: 2, opacity: 0, fixed: true, name: ''
+        });
+        var c1 = this.board.create('circle', [this.point_list[dcel_vertex.data.global_id], p], {strokeWidth: width, strokeColor: color});
+        return {
+            point: p,
+            circle: c1
+        }
+    }
+    remove_circle(data){
+        this.board.removeObject(data.circle);
+        this.board.removeObject(data.point);
     }
 }
-function delete_circle(data){
-    board_ref.removeObject(data.circle);
-    board_ref.removeObject(data.point);
-} */

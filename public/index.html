@@ -12,147 +12,143 @@
     <script type="text/javascript" src="./javascripts/jsxgraphcore.js"></script>
 </head>
 <body>
-    <div class="UI">
-        <div class="Plane">
-            <div id="box" class="jxgbox"></div>
-            <div class="Controls">
-                <div class="Reset">Reiniciar Todo</div>
-            </div>
-        </div>
-        <div class="Data">
-            <div class="Sites">
-                <h3>Sitios</h3>
-                <div class="Sections">
-                    <div class="Section Reset">
-                        <button>Reiniciar</button>
-                    </div>
-                    <div class="Section Generator">
-                        <p>Generador de Sitios aleatorio</p>
-                        <div class='Random'>
-                            <input type="range" min="10" max="100" class="slider">
-                            <span></span>
-                            <button>Genera este número de sitios</button>
+    <header>Mayor Círculo Vacío en polígono simple.</header>
+    <article class="Plane">
+        <div id="box" class="jxgbox"></div>
+    </article>
+    <aside class="UI">
+        <img class="DisplayUI" src="images/Group 2.png" />
+        <div class="Cover">
+            <main class="Data">
+                <div class="Menu clickable" id="ShowSite"><p>Sitios</p><img src="images/Group 5.png"/></div>
+                <section class="Sites">
+                    <h3>Sitios</h3>
+                    <div class="Sections">
+                        <div class="Section Reset">
+                            <button>Reiniciar</button>
+                        </div>
+                        <div class="Section Generator">
+                            <p>Generador de Sitios aleatorio</p>
+                            <div class='Random'>
+                                <input type="range" min="10" max="100" class="slider">
+                                <span></span>
+                                <button>Genera este número de sitios</button>
+                            </div>
+                        </div>
+                        <div class="Section Generator">
+                            <p>Cargar puntos de archivo</p>
+                            <input type='file' class='files' name="files[]" >
+                            <button class='LoadFile'>Cargar</button>
+                        </div>
+                        <div class="Section Examples Generator">
+                            <p>Ejemplos</p>
+                            <button class="1">Ejemplo1</button>
+                            <button class="2">Ejemplo2</button>
+                            <button class="3">Ejemplo3</button>
+                            <button class="4">Ejemplo4</button>
+                        </div>
+                        <div class="Section">
+                            <p>Descargas (crear sitios para descargar)</p>
+                            <div class="Download"></div>
+                        </div>
+                        <div class="Section">
+                            <p>Lista de sitios</p>
+                            <ul class='SitesList'></ul>
                         </div>
                     </div>
-                    <div class="Section Generator">
-                        <p>Cargar puntos de archivo</p>
-                        <input type='file' class='files' name="files[]" >
-                        <button class='LoadFile'>Cargar</button>
-                    </div>
-                    <div class="Section Examples Generator">
-                        <p>Ejemplos</p>
-                        <button class="1">Ejemplo1</button>
-                        <button class="2">Ejemplo2</button>
-                        <button class="3">Ejemplo3</button>
-                        <button class="4">Ejemplo4</button>
-                    </div>
-                    <div class="Section">
-                        <p>Descargas (crear sitios para descargar)</p>
-                        <div class="Download"></div>
-                    </div>
-                    <div class="Section">
-                        <p>Lista de sitios</p>
-                        <ul class='SitesList'></ul>
-                    </div>
-                </div>
-            </div>
-            <div class="Delaunay">
-                <h3>Delaunay</h3>
-                <div class="Sections">
-                    <div class="Section Reset">
-                        <button>Reiniciar</button>
-                    </div>
-                    <div class="Section Generator">
-                        <p>Genera el DCEL de la triangulación de Delaunay.</p>
-                        <button class="Generate">Genera Delaunay</button>
-                    </div>
-                    <div class="Section">
-                        <p>Inspeccionar DCEL (Hacer click en arista de delaunay)</p>
-                        <div class='DCEL'></div>
-                    </div>
-                </div>
-            </div>
-            <div class="Polygon">
-                <h3>Polígono</h3>
-                <div class="Sections">
-                    <div class="Section Reset">
-                        <button>Reiniciar</button>
-                    </div>
-                    <div class="Section Generator Manual">
-                        <p>Creación manual</p>
-                        <button class='Enable'>Habilita: Agregar vértice con click.</button>
-                        <button class='Disable'>Deshabilita: Agregar vértice con click.</button>
-                        <button class='Close'>Unir primer vértice con ultimo</button>
-                    </div>
-                    <div class="Section FileLoader Generator Automatic">
-                        <p>Cargar de archivo</p>
-                        <input type='file' class='files' name="files[]" >
-                        <button class='LoadFile'>Cargar</button>
-                    </div>
-                    <div class="Section Examples Generator Automatic">
-                        <p>Ejemplos</p>
-                        <button class="1">Ejemplo1</button>
-                        <button class="2">Ejemplo2</button>
-                        <button class="3">Ejemplo3</button>
-                        <button class="4">Ejemplo4</button>
-                    </div>
-                    <div class="Section">
-                        <p>Descargas (crear vertices para descargar)</p>
-                        <div class="Download"></div>
-                    </div>
-                    
-                    <div class="Section">
-                        <p>Lista de vértices</p>
-                        <ul class='PolygonList'></ul>
-                    </div>
-                </div>
-            </div>
-            <div class="Voronoi">
-                <h3>Voronoi</h3>
-                <div class="Sections">
-                    <div class="Section Reset">
-                        <button>Reiniciar</button>
-                    </div>
-                    <div class="Section Generator">
-                        <p>Genera Diagrama de Voronoi con Frontera</p>
-                        <button>Genera Voronoi</button>
-                    </div>
-                    <div class="Section">
-                        <p>DCEL (Hacer click a alguna arista para ver su representación)</p>
-                        <div class="DCEL"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="LEC">
-                <h3>Algoritmo: (Mayor Círculo Vacío)</h3>
-                <div class="Sections">
-                    <div class="Section">
-                        <p class="Text1">Iniciar</p>
-                        <p class="Text2"></p>
-                        <p class="Text3"></p>
-                        <div class="Controls">
-                            <button class="Play">Automatico</button>
-                            <button class="Pause">Pausar</button>
-                            <button class="NextStep">Avanzar 1 paso</button>
+                </section>
+                <div class="Menu clickable" id="ShowDelaunay"><p>Delaunay</p><img src="images/Group 5.png"/></div>
+                <section class="Delaunay">
+                    <h3>Delaunay</h3>
+                    <div class="Sections">
+                        <div class="Section Reset">
+                            <button>Reiniciar</button>
+                        </div>
+                        <div class="Section Generator">
+                            <p>Genera el DCEL de la triangulación de Delaunay.</p>
+                            <button class="Generate">Genera Delaunay</button>
+                        </div>
+                        <div class="Section">
+                            <p>Inspeccionar DCEL (Hacer click en arista de delaunay)</p>
+                            <div class='DCEL'></div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </section>
+                <div class="Menu clickable" id="ShowPolygon"><p>Polígono</p><img src="images/Group 5.png"/></div>
+                <section class="Polygon">
+                    <h3>Polígono</h3>
+                    <div class="Sections">
+                        <div class="Section Reset">
+                            <button>Reiniciar</button>
+                        </div>
+                        <div class="Section Generator Manual">
+                            <p>Creación manual</p>
+                            <button class='Enable'>Habilita: Agregar vértice con click.</button>
+                            <button class='Disable'>Deshabilita: Agregar vértice con click.</button>
+                            <button class='Close'>Unir primer vértice con ultimo</button>
+                        </div>
+                        <div class="Section FileLoader Generator Automatic">
+                            <p>Cargar de archivo</p>
+                            <input type='file' class='files' name="files[]" >
+                            <button class='LoadFile'>Cargar</button>
+                        </div>
+                        <div class="Section Examples Generator Automatic">
+                            <p>Ejemplos</p>
+                            <button class="1">Ejemplo1</button>
+                            <button class="2">Ejemplo2</button>
+                            <button class="3">Ejemplo3</button>
+                            <button class="4">Ejemplo4</button>
+                        </div>
+                        <div class="Section">
+                            <p>Descargas (crear vertices para descargar)</p>
+                            <div class="Download"></div>
+                        </div>
+                        
+                        <div class="Section">
+                            <p>Lista de vértices</p>
+                            <ul class='PolygonList'></ul>
+                        </div>
+                    </div>
+                </section>
+                <div class="Menu clickable" id="ShowVoronoi"><p>Voronoi</p><img src="images/Group 5.png"/></div>
+                <section class="Voronoi">
+                    <h3>Voronoi</h3>
+                    <div class="Sections">
+                        <div class="Section Reset">
+                            <button>Reiniciar</button>
+                        </div>
+                        <div class="Section Generator">
+                            <p>Genera Diagrama de Voronoi con Frontera</p>
+                            <button>Genera Voronoi</button>
+                        </div>
+                        <div class="Section">
+                            <p>DCEL (Hacer click a alguna arista para ver su representación)</p>
+                            <div class="DCEL"></div>
+                        </div>
+                    </div>
+                </section>
+                <div class="Menu clickable" id="ShowLEC"><p>LEC</p><img src="images/Group 5.png"/></div>
+                <section class="LEC">
+                    <h3>Algoritmo: (Mayor Círculo Vacío)</h3>
+                    <div class="Sections">
+                        <div class="Section Reset">
+                            <button>Reiniciar</button>
+                        </div>
+                        <div class="Section">
+                            <p class="Text1">Iniciar</p>
+                            <p class="Text2"></p>
+                            <p class="Text3"></p>
+                            <div class="Controls">
+                                <button class="Play">Automatico</button>
+                                <button class="Pause">Pausar</button>
+                                <button class="NextStep">Avanzar 1 paso</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
         </div>
-        <div class="Menu">
-            <div id="ShowSite">Sitios</div>
-            <div id="ShowDelaunay">Delaunay</div>
-            <div id="ShowPolygon">Polígono</div>
-            <div id="ShowVoronoi">Voronoi</div>
-            <div id="ShowLEC">LEC</div>
-        </div>
-    </div>
-    <div class='Container'>
-        <div id='Error' style='display: grid; grid-template-columns: 1fr 100px; border: 1px solid black;'>
-            <p style='color: red;'></p>
-            <button style='height: 30px; top: 50%; transform: translateY(25%);'>Clear</button>
-        </div>
-    </div>
+    </aside>
     
     <!-- Jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

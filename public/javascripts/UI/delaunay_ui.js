@@ -2,7 +2,6 @@ import { UI } from './UI.js';
 import { Main } from '../main.js';
 
 function show_section(){
-    UI.clear();
     $('.Data .Delaunay').css('display', 'block');
 }
 function hide_section(){
@@ -54,13 +53,21 @@ export const Delaunay_UI = {
     show_generators: show_generators,
     hide_generators: hide_generators
 }
-
+// Menu button
+var open = false;
+$('#ShowDelaunay').on('click', ()=>{
+    if(!open){
+        show_section();
+        open = true;
+    } else {
+        hide_section();
+        open = false;
+    }
+    $('#ShowDelaunay img').toggleClass('Flip');
+});
 // Buttons and events
 $('.Delaunay .Generate').on('click', ()=>{
     Main.delaunay.build();
-});
-$('.Menu #ShowDelaunay').on('click', ()=>{
-    Delaunay_UI.show();
 });
 // Reset
 $('.Delaunay .Reset').on('click', ()=>{

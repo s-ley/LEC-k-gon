@@ -13,6 +13,8 @@ export default class Polygon {
         this.board = board_ref;
         this.manual = false;
         this.finished = false;
+        this.selected_edge = null;
+        this.arrow = null;
         this.reset();
     }
     reset(){
@@ -22,6 +24,8 @@ export default class Polygon {
         }
         this.manual = false;
         this.finished = false;
+        this.selected_edge = null;
+        this.arrow = null;
         if(this.UI !== null){
             this.UI.list_reset();
             this.UI.show_generators();
@@ -112,6 +116,7 @@ export default class Polygon {
             }
         });
         this.dcel.vertices.map(v => this.board.delete_point(v));
+        if(this.arrow !== null) this.board.delete_arrow(this.arrow);
         this.reset();
     }
     enable_manual(){
@@ -125,6 +130,14 @@ export default class Polygon {
     }
     done(){
         return this.finished;
+    }
+    select_edge(half_edge){
+        if(this.board === null) return;
+        if(this.selected_edge !== null){
+            this.board.delete_arrow(this.arrow);
+        }
+        this.selected_edge = half_edge;
+        this.arrow = this.board.add_arrow(half_edge, this.pointColor);
     }
     get_dcel(){
         return this.dcel;

@@ -4,7 +4,6 @@ import { polygon_examples } from '../Examples/polygon_examples.js';
 import { FileLoader } from '../file_loader.js';
 
 function show_section(){
-    UI.clear();
     $('.Polygon').css('display', 'block');
 }
 function hide_section(){
@@ -46,6 +45,19 @@ export const Polygon_UI = {
     show_generators: show_generators,
     hide_generators: hide_generators,
 }
+// Menu button
+var open = false;
+$('#ShowPolygon').on('click', ()=>{
+    if(!open){
+        show_section();
+        open = true;
+    } else {
+        hide_section();
+        open = false;
+    }
+    $('#ShowPolygon img').toggleClass('Flip');
+});
+
 polygon_examples.map((arr,i) => {
     $(`.Polygon .Examples .${i+1}`).on('click', ()=>{
         Main.polygon.load_example(i);
@@ -58,9 +70,6 @@ $('.Polygon .LoadFile').on('click', function(e){
         var promise = FileLoader.load(files[0].files, Main.polygon, "add_vertex");
         promise.then(()=>Main.polygon.close());
     }
-});
-$('.Menu #ShowPolygon').on('click', function(e){
-    show_section();
 });
 $('.Polygon .Manual .Enable').on('click', function(e){
     Main.polygon.enable_manual();
@@ -76,6 +85,7 @@ $('.Polygon .Manual .Close').on('click', function(e){
     Main.polygon.close();
 });
 $('.Polygon .Reset').on('click', function(e){
-    Main.polygon.delete_from_board();
+    Main.lec.delete_from_board();
     Main.voronoi.delete_from_board();
+    Main.polygon.delete_from_board();
 });

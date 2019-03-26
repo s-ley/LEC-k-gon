@@ -1,112 +1,115 @@
-:root{
-    --border-radius-size: 10px;
-    --distance-between-elements: 10px;
-    --UI-height: 35em;
-    --primary-color: #970C10;
-    --secondary-color: #FDFFF0;
-    --tertiary-color: #8B8060;
-    --background-color: #1E1200;
-}
-*{
-    font-family: 'Arial';
-}
-.UI {
-    display: grid;
-    grid-template-columns: 1fr 1fr 40px;
-    height: var(--UI-height);
-    padding: var(--distance-between-elements);
-    padding-bottom: 20px;
-    border: 1px solid black;
-    border-radius: var(--border-radius-size);
+@import url('https://fonts.googleapis.com/css?family=Lato');
 
-    background-color: #506377;
-    margin-bottom: 3em;
+:root{
+    --controls-height: 20em;
+    --controls-padding:1em;
+    --plane-height: 25em;
+    --plane-height-desktop: 35em;
+    --menu-background: rgba(23,23,23,0.72);
+    --letter-color: #fff;
+    --background-color: #000;
+    --transparent-border: rgba(128, 40, 40, 0.16);
 }
-/* Left Side */
+body, html {
+    margin: 0;
+    font-family: 'Lato';
+    background-color: var(--background-color);
+    height: 140vh;
+}
+::-webkit-scrollbar { 
+    display: none; 
+}
+p,h1,h2,h3,h4,h5{
+    margin-block-start: 0;
+    margin-block-end: 0;
+}
+header {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--letter-color);
+    height: auto;
+    padding: 1em;
+    margin-bottom: 1em;
+}
+/* Plane */
 .Plane {
-    height: 100%;
-    display: grid;
-    grid-template-rows: 1fr 50px;
-}
-.Plane .Controls {
-    padding: var(--distance-between-elements);
-    padding-left: 0;
-    display: flex;
-    float: left;
-    cursor: pointer;
-}
-.Plane .Controls>div{
-    border-radius: var(--border-radius-size);
-    border: 1px solid black;
-    padding: var(--distance-between-elements);
-    padding-bottom: calc(var(--distance-between-elements) * 2.5);
-    background-color: #fff;
+    height: var(--plane-height);
 }
 .jxgbox {
     height: 100%;
     width: 100%;
 }
-
-/* Data section */
-.Data{
-    border: 1px solid black;
-    border-radius: var(--border-radius-size);
-    margin-left: var(--distance-between-elements);
-    margin-right: var(--distance-between-elements);
-    padding: var(--distance-between-elements);
-    background-color: #fff;
-    height: calc(var(--UI-height) * 0.96);
-    overflow: hidden;
-}
-.Data h3{
-    margin: 0;
-    margin-bottom: var(--distance-between-elements);
-}
-.Data .Sections{
-    border: 1px solid black;
-    border-radius: var(--border-radius-size);
-    padding: var(--distance-between-elements);
-    overflow-y: scroll;
-    height: calc(var(--UI-height) * 0.8);
-}
-.Data .Section:nth-last-child(n+2){
-    border-bottom: 1px solid black;
-    padding-bottom: 1em;
-}
-
-.Data .LEC .Section {
-    height: 300px;
-    position: relative;
-}
-.Data .LEC .Section .Controls {
-    position: absolute;
-    bottom: var(--distance-between-elements);
-    right: var(--distance-between-elements);
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-}
-
-/* Menu buttons */
-.Menu>div{
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    padding: var(--distance-between-elements) 5px var(--distance-between-elements) 5px;
-    border: 1px solid black;
-    border-radius: var(--border-radius-size);
-    background-color: #fff;
+/* Controls */
+.Menu,
+.DisplayUI{
     cursor: pointer;
 }
-
-/* Old, must be deleted at some point */
-.Container{
+.UI {
+    position: fixed;
+    height: var(--controls-height);
+    bottom: 0;
+    left: calc(100vw - 40px);
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 40px auto;
+    transition: 0.5s;
+    z-index: 100;
 }
-.Container>div{
-    padding: 10px;
+.Cover{
+    background-color: #aaa;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
+.Data{
+    background-color: var(--menu-background);
+    color: var(--letter-color);
+}
+.Menu {
+    position: relative;
+    height: 40px;
+    width: calc(100vw - 40px);
+    border-bottom: 1px solid var(--transparent-border);
+    background-color: var(--menu-background);
+}
+.Menu p{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    padding-left: var(--controls-padding);
+    font-size: 1.3em;
+}
+.Menu img {
+    position: absolute;
+    right: var(--controls-padding);
+    transition: 0.5s;
+}
+section{
+    overflow: hidden;
+}
+.Data h3,
+.Section {
+    padding: var(--controls-padding);
+}
+.Data h3,
+.Section:not(:nth-child(1)){
+    border-bottom: 1px solid var(--transparent-border);
+}
+.LEC .Section:nth-last-child(1){
+    display: grid;
+    grid-template-rows: 2em 2em 6em 2em;
+}
+.LEC .Controls button{
+    margin: auto;
+}
+
+/* Classes to toggle */
+.Open{
+    left: 0;
+}
+.Flip{
+    transform: rotate(180deg);
+}
+button,
 .clickable{
-    text-decoration: underline;
     cursor: pointer;
     -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
@@ -116,21 +119,27 @@
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome and Opera */
 }
-@media screen and (max-width: 1023px){
-    .UI{
-        grid-template-columns: 1fr;
+.clickable{
+    text-decoration: underline;
+}
+
+@media screen and (min-width: 1024px){
+    body,html{
         height: auto;
     }
-    .Plane{
-        height: 30em;
+    .Plane {
+        height: var(--plane-height-desktop);
+        width: var(--plane-height-desktop);
+        margin: auto;
     }
-    .Data {
-        margin: 1em 0 1em 0;
+    .UI {
+        height: 33em;
     }
     .Menu {
-        display: flex;
+        width: calc(40vw - 40px);
     }
-    .Menu>div{
-        writing-mode: horizontal-tb;
+    .Open {
+        left: 60vw;
     }
 }
+

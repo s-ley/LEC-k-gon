@@ -101,7 +101,9 @@ export default class Voronoi {
                     curr.twin.data.intersector = he1; he1.data.intersector = curr.twin;
                     he1.twin = he2; he2.twin = he1;
                     he1.incident_face = this.dcel.faces[curr.p2.data.local_id];
+                    this.dcel.faces[curr.p2.data.local_id].incident_edge = he1;
                     he2.incident_face = this.dcel.faces[curr.p1.data.local_id];
+                    this.dcel.faces[curr.p1.data.local_id].incident_edge = he2;
                     this.dcel.half_edges.push(he1); this.dcel.half_edges.push(he2);
                     if(this.board !== null){
                         he1.data.global_id = this.board.next_line_index();
@@ -244,7 +246,10 @@ export default class Voronoi {
                 I[0] = edge.prev.twin.prev.twin.data.intersector;
                 I[I.length-1] = edge.twin.next.data.intersector;
             }
-            I.map(ed => ed.incident_face = this.dcel.faces[edge.p1.data.local_id]);
+            I.map(ed => {
+                ed.incident_face = this.dcel.faces[edge.p1.data.local_id];
+                this.dcel.faces[edge.p1.data.local_id].incident_edge = ed;
+            });
             for(var i = 0; i+1<I.length; i++){
                 I[i].prev = I[i+1];
                 I[i+1].next = I[i];
@@ -255,6 +260,7 @@ export default class Voronoi {
             }
             for(var i = 2; i+2<I.length; i++){
                 I[i].twin.incident_face = this.outside_face;
+                this.outside_face.incident_edge = I[i].twin;
             }
             if(I[1].twin.next !== null){
                 I[1].twin.next.twin.next = I[2].twin;
@@ -318,7 +324,10 @@ export default class Voronoi {
             I[0] = edge.prev.twin.prev.twin.data.intersector;
             I[I.length-1] = edge.twin.next.data.intersector;
         }
-        I.map(ed => ed.incident_face = this.dcel.faces[edge.p1.data.local_id]);
+        I.map(ed => {
+            ed.incident_face = this.dcel.faces[edge.p1.data.local_id];
+            this.dcel.faces[edge.p1.data.local_id].incident_edge = ed;
+        });
         for(var i = 0; i+1<I.length; i++){
             I[i].prev = I[i+1];
             I[i+1].next = I[i];
@@ -370,6 +379,9 @@ export default class Voronoi {
     done(){
         return this.built;
     }
+    get_dcel(){
+        return this.dcel;
+    }
     delete_from_board(){
         if(this.board !== null){
             this.dcel.half_edges.map(e => this.board.delete_bidirectional_edge(e));
@@ -377,6 +389,9 @@ export default class Voronoi {
             this.dcel.vertices.map(v => {
                 if(v.x !== Infinity && v.y !== Infinity) this.board.delete_point(v);
             });
+        }
+        if(this.UI !== null){
+            this.UI.hide_edge();
         }
         this.reset();
     }

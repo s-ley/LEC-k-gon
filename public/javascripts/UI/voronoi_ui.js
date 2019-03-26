@@ -9,7 +9,6 @@ function hide_generator(){
     $('.Voronoi .Generator').css('display', 'none');
 }
 function show_section(){
-    UI.clear();
     $('.Voronoi').css('display', 'block');
 }
 function hide_section(){
@@ -57,12 +56,22 @@ export const Voronoi_UI = {
     show_edge: show_dcel_edge,
     hide_edge: hide_dcel_edge,
 }
-$('.Menu #ShowVoronoi').on('click', function(e){
-    show_section();
+// Menu button
+var open = false;
+$('#ShowVoronoi').on('click', ()=>{
+    if(!open){
+        show_section();
+        open = true;
+    } else {
+        hide_section();
+        open = false;
+    }
+    $('#ShowVoronoi img').toggleClass('Flip');
 });
 $('.Voronoi .Generator button').on('click', function(e){
     Main.voronoi.build();
 });
 $('.Voronoi .Reset button').on('click', function(e){
+    Main.lec.delete_from_board();
     Main.voronoi.delete_from_board();
 });
