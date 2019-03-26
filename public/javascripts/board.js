@@ -26,7 +26,7 @@ export default class Board {
         this.create_board();
     }
     create_board(){
-        this.board = JXG.JSXGraph.initBoard('box', {boundingbox: this.bb, axis:true });
+        this.board = JXG.JSXGraph.initBoard('box', {boundingbox: this.bb, axis:false });
         this.board.on('down', this.click_event.bind(this));
     }
     update_bounding_box(){
