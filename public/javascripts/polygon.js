@@ -206,7 +206,7 @@ export default class Polygon {
             if(h2 !== null) h2 = h2.data;
             if(nd !== null) nd = nd.data;
             if(events[i].ev === 2){
-                if(!Intersections.semgent_segment_intersects(h1, h2)) continue;
+                if(!Intersections.segment_segment_intersects(h1, h2)) continue;
                 var inter = Intersections.lines_intersection(h1, h2);
                 if(!((h1.p1.equals(inter) || h1.p2.equals(inter)) && (h2.p1.equals(inter) || h2.p2.equals(inter)))){
                     return false;
@@ -225,7 +225,7 @@ export default class Polygon {
                         return false;
                     }
                 }
-                if(Intersections.semgent_segment_intersects(h2, nd)){
+                if(Intersections.segment_segment_intersects(h2, nd)){
                     var inter = Intersections.lines_intersection(nd, h2);
                     if(!((nd.p1.equals(inter) || nd.p2.equals(inter)) && (h2.p1.equals(inter) || h2.p2.equals(inter)))){
                         return false;

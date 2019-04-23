@@ -148,7 +148,7 @@ export default class LEC{
         }
     }
     condition_2(){
-        if(Intersections.segment_ray_intersects(this.voronoi_edge, this.polygon_edge) && !Intersections.semgent_segment_intersects(this.voronoi_edge, this.polygon_edge)){
+        if(Intersections.segment_ray_intersects(this.voronoi_edge, this.polygon_edge) && !Intersections.segment_segment_intersects(this.voronoi_edge, this.polygon_edge)){
             var radius = distance(this.polygon_edge.p2, this.current_face.identifier);
             if(this.board !== null){
                 this.polygon_vertex_circle = this.board.add_circle(this.polygon_edge.p2, radius,this.circle_stroke_width, 'purple');
