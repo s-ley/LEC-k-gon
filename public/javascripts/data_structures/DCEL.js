@@ -12,7 +12,7 @@ export const Vertex = function(x,y,data){
         data: data,
         equals: function(v2){
             var dx = x - v2.x, dy = y - v2.y;
-            return Math.sqrt(dx*dx+dy*dy)<0.01;
+            return Math.sqrt(dx*dx+dy*dy)<0.0001;
         }
     }
 }
@@ -44,6 +44,12 @@ export const HalfEdge = function(p1, p2, data){
         to_html: function(){
             if(this.incident_face !== null && this.incident_face.identifier !== null && this.incident_face.identifier.data !== null) return `(<strong>${this.incident_face.identifier.data.global_id}<strong>)(${p1.data.global_id} -> ${p2.data.global_id})`;
             return `(${p1.data.global_id} -> ${p2.data.global_id})`;
+        },
+        eval: function (x, y){
+            if(p1.x === p2.x) return new Vertex(x,y,null);
+            var dy = p1.y-p2.y;
+            var dx = p1.x-p2.x;
+            return new Vertex(x, (x-p1.x)*dy/dx+p1.y, null);
         }
     }
 }

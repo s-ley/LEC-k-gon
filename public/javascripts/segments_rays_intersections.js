@@ -1,6 +1,7 @@
 import {Vertex} from './data_structures/DCEL.js';
 // Determines if the half edges intersects once
 function intersects_once(he1, he2){
+    if(he1 === null || he2 === null) return false;
     var dx1 = he1.p2.x - he1.p1.x;
     var dx2 = he2.p2.x - he2.p1.x;
     var dy1 = he1.p2.y - he1.p1.y;
@@ -95,6 +96,5 @@ function intersected_by_segment_once(seg1, seg2){
 export const Intersections = {
     segment_ray_intersects: intersected_by_ray_once,
     lines_intersection: single_point_by_ray_intersection,
-    semgent_segment_intersects: intersected_by_segment_once,
-    
+    semgent_segment_intersects: intersected_by_segment_once
 }

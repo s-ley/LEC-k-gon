@@ -17,7 +17,7 @@ export default class Board {
     }
     reset(){
         if(this.line_set===null) this.line_set = new PairSet(); else this.line_set.reset();
-        this.bb = [-3, 3, 3, -3];
+        this.bb = [-50, 50, 50, -50];
         this.point_list = [];
         this.line_list = [];
         if(this.point_pool===null) this.point_pool = new Queue(); else this.point_pool.clear();
@@ -26,7 +26,7 @@ export default class Board {
         this.create_board();
     }
     create_board(){
-        this.board = JXG.JSXGraph.initBoard('box', {boundingbox: this.bb, axis:true });
+        this.board = JXG.JSXGraph.initBoard('box', {boundingbox: this.bb, axis:false, grid: false });
         this.board.on('down', this.click_event.bind(this));
     }
     update_bounding_box(){

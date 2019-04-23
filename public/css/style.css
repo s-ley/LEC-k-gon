@@ -34,6 +34,7 @@ header {
 /* Plane */
 .Plane {
     height: var(--plane-height);
+    width: var(--plane-height);
 }
 .jxgbox {
     height: 100%;
@@ -86,10 +87,12 @@ section{
     overflow: hidden;
 }
 .Data h3,
+.Data h5,
 .Section {
     padding: var(--controls-padding);
 }
 .Data h3,
+.Data h5,
 .Section:not(:nth-child(1)){
     border-bottom: 1px solid var(--transparent-border);
 }
@@ -130,7 +133,6 @@ button,
     .Plane {
         height: var(--plane-height-desktop);
         width: var(--plane-height-desktop);
-        margin: auto;
     }
     .UI {
         height: 33em;
