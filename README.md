@@ -1,5 +1,7 @@
 Mayor círculo vacío con restricciones de ubicación en O(kn + nlogn).
 
+![alt text](https://github.com/s-ley/LEC-k-gon/blob/master/preview.gif?raw=true)
+
 Implementación de algoritmos basados en los artículos.
 > G.T. Toussaint, 1983. Computing Largest Empty Circles
 with Location Constraints. International Journal of
